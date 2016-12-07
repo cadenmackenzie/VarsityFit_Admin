@@ -24,11 +24,11 @@ angular.module('starter.controllers', ['ionic'])
 
 
 
-.controller('EditorCtrl', function($rootScope, $scope, $state, PreSurveysModel, Backand) {})
+.controller('EditorCtrl', function($rootScope, $scope, $state, Backand) {})
 
 
 
-.controller('AnalysisCtrl', function($rootScope, $scope, Backand, $state, PostSurveysModel) {})
+.controller('AnalysisCtrl', function($rootScope, $scope, Backand, $state) {})
 
 
 

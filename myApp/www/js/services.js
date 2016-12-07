@@ -12,9 +12,7 @@ angular.module('starter.services', [])
     })
 
 
-    .service('PreSurveysModel', function ($http, Backand) {})
-    
-    .service('PostSurveysModel', function ($http, Backand) {})
+
 
     .service('LoginService', function (Backand) {
         var service = this;

@@ -1,0 +1,37 @@
+<ion-view view-title="Your Account">
+  <ion-content>
+    <div class="bar bar-header item-input-inset">
+      <label class="item-input-wrapper">
+        <i class="icon ion-ios-search placeholder-icon"></i>
+        <input type="search" placeholder="Search">
+      </label>
+      <button class="button button-clear">
+        Cancel
+       </button>
+  </div>
+  <div class="list card">
+
+
+  <a href="#/tab/accountdetails" class="item item-icon-left">
+    <i class="icon ion-ios-person"></i>
+    Account Information
+  </a>
+
+  <a href="#/tab/surveys" class="item item-icon-left">
+    <i class="icon ion-ios-list"></i>
+    View Surveys
+  </a>
+
+  <a href="#/tab/changepassword" class="item item-icon-left">
+    <i class="icon ion-settings"></i>
+    Change Password
+  </a>
+
+</div>
+
+
+    <button class="button button-block button-dark" ng-click = "signout()">Sign Out</button>
+      </div>
+    </ion-list>
+  </ion-content>
+</ion-view>

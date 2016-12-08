@@ -98,12 +98,22 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       }
     })
     
-    .state('tab.editor', {
-      url: '/editor',
+    .state('tab.workouteditor', {
+      url: '/workouteditor',
       views: {
-        'tab-editor': {
-          templateUrl: 'templates/tab-editor.html',
-          controller: 'EditorCtrl'
+        'tab-workouteditor': {
+          templateUrl: 'templates/tab-workouteditor.html',
+          controller: 'WorkoutEditorCtrl as vm'
+        }
+      }
+    })
+
+    .state('tab.exerciseeditor', {
+      url: '/exerciseeditor',
+      views: {
+        'tab-exerciseeditor': {
+          templateUrl: 'templates/tab-exerciseeditor.html',
+          controller: 'ExerciseEditorCtrl as vm'
         }
       }
     })

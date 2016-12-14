@@ -24,6 +24,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
 })
 
 
+
 .config(function(BackandProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
 
 /*  
@@ -103,10 +104,40 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       views: {
         'tab-workouteditor': {
           templateUrl: 'templates/tab-workouteditor.html',
-          controller: 'WorkoutEditorCtrl as vm'
+          controller: 'WorkoutEditorCtrl as cm'
         }
       }
     })
+    
+    .state('tab.sportworkout', {
+      url: '/sportworkout',
+      views: {
+        'tab-workouteditor': {
+          templateUrl: 'templates/tab-sportworkout.html',
+          controller: 'SportWorkoutCtrl as swc'
+        }
+      }
+    })
+
+    .state('tab.workout', {
+      url: '/workout',
+      views: {
+        'tab-workout': {
+          templateUrl: 'templates/tab-workout.html',
+          controller: 'WorkoutCtrl as wlc'
+        }
+      }
+    })      
+    
+    .state('tab.workoutsexercises', {
+      url: '/workoutsexercises',
+      views: {
+        'tab-workout': {
+          templateUrl: 'templates/tab-workoutsexercises.html',
+          controller: 'WorkoutExerciseCtrl as wte'
+        }
+      }
+    })    
 
     .state('tab.exerciseeditor', {
       url: '/exerciseeditor',
@@ -117,6 +148,25 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
         }
       }
     })
+    
+    .state('tab.sport', {
+      url: '/sport',
+      views: {
+        'tab-sport': {
+          templateUrl: 'templates/tab-sport.html',
+          controller: 'SportCtrl as sm',
+        }
+      }
+    })     
+    .state('tab.sporteditor', {
+      url: '/sporteditor',
+      views: {
+        'tab-sport': {
+          templateUrl: 'templates/tab-sporteditor.html',
+          controller: 'SportEditorCtrl as sm'
+        }
+      }
+    }) 
 
   .state('tab.account', {
     url: '/account',

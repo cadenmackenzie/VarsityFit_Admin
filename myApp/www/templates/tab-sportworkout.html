@@ -1,0 +1,23 @@
+<ion-view view-title="Sport Workout Editor">
+        <ion-content class="padding has-header">
+            <!-- CREATING -->
+            <!--<div class="bar bar-header">-->
+            <!--    <span ng-click="cm.cancelCreate()" class="cancel-create">Cancel</span>-->
+            <!--</div>-->
+          
+            <div>
+              <div ng-controller="SportCtrl as sm">
+                <div ng-if="!sm.isCreating && !sm.isEditing">
+                  <!--<form ng-submit="submitForm(sport)">-->
+                    <ion-list>
+                      <ion-item ng-repeat="sport in sm.data | orderBy: 'name'"  ng-model="sport.name" ng-click="submitForm(sport)">
+                        {{ sport.name }}
+                      </ionitem> 
+                    </ion-list>
+                  <!--</form>  -->
+                </div>
+              </div>
+            </div>
+            
+        </ion-content>
+</ion-view>

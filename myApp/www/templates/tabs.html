@@ -6,15 +6,26 @@ navigation history that also transitions its views in and out.
 <ion-tabs class="tabs-icon-top tabs-color-active-energized">
   
 
-  <!-- Workout Editor Tab, was workout-->
-  <ion-tab title="Workout Editor" icon-off="ion-ios-body-outline" icon-on="ion-ios-body" href="#/tab/workouteditor">
+  <!-- Sport Editor Tab, was workout-->
+  <ion-tab title="Sport Editor" icon-off="ion-trophy" icon-on="ion-trophy" href="#/tab/sport">
+    <ion-nav-view name="tab-sport"></ion-nav-view>
+  </ion-tab>
+
+  <!-- Workout Creator Tab, was workout-->
+  <ion-tab title="Workout Creator" icon-off="ion-ios-body-outline" icon-on="ion-ios-body" href="#/tab/workouteditor">
     <ion-nav-view name="tab-workouteditor"></ion-nav-view>
   </ion-tab>
   
-  <!-- Exercise Editor Tab, was workout-->
-  <ion-tab title="Exercise Editor" icon-off="ion-ios-body-outline" icon-on="ion-ios-body" href="#/tab/exerciseeditor">
+  <!-- Exercise Creator Tab, was workout-->
+  <ion-tab title="Exercise Creator" icon-off="ion-ios-body-outline" icon-on="ion-ios-body" href="#/tab/exerciseeditor">
     <ion-nav-view name="tab-exerciseeditor"></ion-nav-view>
   </ion-tab>
+  
+  <!-- Workout Editor Tab-->
+  <ion-tab title="Workout Editor" icon-off="ion-ios-body-outline" icon-on="ion-ios-body" href="#/tab/workout">
+    <ion-nav-view name="tab-workout"></ion-nav-view>
+  </ion-tab>
+
   
   <!-- Analysis Tab, was references -->
   <ion-tab title="Analysis" icon-off="ion-ios-folder-outline" icon-on="ion-ios-folder" href="#/tab/analysis">

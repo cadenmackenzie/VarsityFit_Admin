@@ -12,6 +12,32 @@ angular.module('starter.services', [])
     })
 
 
+    .service('WorkoutExerciseModel', function ($http, Backand) {
+        var service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'workouts_exercises/';
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            return $http.get(getUrlForId(id));
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+    })
+
     .service('ExerciseModel', function ($http, Backand) {
         var service = this,
             baseUrl = '/1/objects/',
@@ -61,6 +87,150 @@ angular.module('starter.services', [])
 
         service.create = function (object) {
             return $http.post(getUrl(), object);
+        };
+    })
+    
+    .service('UserModel', function ($http, Backand) {
+        var service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'users/';
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            return $http.get(getUrlForId(id));
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+    })  
+    
+    .service('WorkoutListModel', function ($http, Backand) {
+        var service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'workouts/';
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            return $http.get(getUrlForId(id));
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+    }) 
+    
+    .service('SportModel', function ($http, Backand) {
+        var service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'sports/';
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            return $http.get(getUrlForId(id));
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+    })   
+    
+    .service('UserSportModel', function ($http, Backand) {
+        var service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'users_sports/';
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            return $http.get(getUrlForId(id));
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+    })
+
+    .service('SportWorkoutModel', function ($http, Backand) {
+        var service = this,
+            baseUrl = '/1/objects/',
+            objectName = 'sports_workouts/';
+
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;
+        }
+
+        function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl());
+        };
+
+        service.fetch = function (id) {
+            return $http.get(getUrlForId(id));
+        };
+
+        service.create = function (object) {
+            return $http.post(getUrl(), object);
+        };
+    })
+
+    .service('formData', function() {
+        
+        return {
+            form: {},
+            getForm: function() {
+                return this.form;
+            },
+            updateForm: function(form) {
+                // console.log("test1")
+                this.form = form;
+            }
         };
     })
 

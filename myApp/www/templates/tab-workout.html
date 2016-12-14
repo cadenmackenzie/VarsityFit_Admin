@@ -1,4 +1,4 @@
-<ion-view view-title="Workout Editor">
+<ion-view view-title="Workouts">
         <ion-content class="padding has-header">
             <!-- CREATING -->
             <!--<div class="bar bar-header">-->
@@ -10,8 +10,8 @@
                 <div ng-if="!wlc.isCreating && !wlc.isEditing">
                   <!--<form ng-submit="submitForm(sport)">-->
                     <ion-list>
-                      <ion-item ng-repeat="workout in wlc.data | orderBy: 'name'"  ng-model="workout.name" ng-click="submitForm(workout)">
-                        {{ workout.name }}
+                      <ion-item ng-repeat="workouts in wlc.data | orderBy: 'name'"  ng-model="workouts.name" ng-click="submitForm(workouts)">
+                        {{ workouts.name }}
                       </ionitem> 
                     </ion-list>
                   <!--</form>  -->

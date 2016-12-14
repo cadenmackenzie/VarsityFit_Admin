@@ -11,7 +11,6 @@ angular.module('starter.services', [])
         };
     })
 
-
     .service('WorkoutExerciseModel', function ($http, Backand) {
         var service = this,
             baseUrl = '/1/objects/',
@@ -228,7 +227,6 @@ angular.module('starter.services', [])
                 return this.form;
             },
             updateForm: function(form) {
-                // console.log("test1")
                 this.form = form;
             }
         };

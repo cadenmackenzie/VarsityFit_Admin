@@ -2,14 +2,14 @@
 
     <div>
         <ion-content class="padding has-header">
-             <!--CREATING -->
+             CREATING 
             <div class="bar bar-header">
-                <span ng-click="cm.cancelCreate()" class="cancel-create">Cancel</span>
+                <span ng-click="vm.cancelCreate()" class="cancel-create">Cancel</span>
             </div>
             
             <div>
-              <div ng-controller="ExerciseEditorCtrl as vm">
-                <div ng-if="!vm.isCreating && !vm.isEditing">
+              <!--<div ng-controller="ExerciseEditorCtrl as vm">-->
+              <!--  <div ng-if="!vm.isCreating && !vm.isEditing">-->
                   <form class="create-form" role="form"
                         ng-submit="cm.create(cm.newObject)" novalidate>
                       <div class="list has-header padding">
@@ -27,8 +27,8 @@
                     <br></br>
                     <button class="button button-block button-dark" type="submit">Submit</button>
                 </form>
-                </div>
-              </div>
+              <!--  </div>-->
+              <!--</div>-->
             </div>
             
         </ion-content>

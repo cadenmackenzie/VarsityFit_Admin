@@ -407,17 +407,29 @@ angular.module('starter.controllers', ['ionic'])
 
 //contoller to populate workouts_exercises
 .controller('WorkoutExerciseCtrl', function($rootScope, $scope, WorkoutExerciseModel, $state, Backand, formData) {
-  
   var wte = this;
-  $scope.workout = {};
+
+  $scope.exercise = {};
+  //$scope.users = {};
+  var exerciseId;
+
+  $scope.workouts = formData.getForm();
+  var workoutId = $scope.workouts.id;
+  console.log(workoutId)
+
+  //getAll();
   
-  $scope.submitForm = function(workout) {
-    formData.updateForm(workout);
+  $scope.submitForm = function(exercise) {
+    formData.updateForm(exercise);
     console.log("Retrieving form from service", formData.getForm());
-    //$state.go('tab.sporteditor');
+    exerciseId = exercise.id;
+    wte.newObject.exercise = exerciseId;
+    wte.newObject.workout = workoutId;
+    wte.create(wte.newObject);
+    
     
   };
-
+  
   function getAll(){
     WorkoutExerciseModel.all()
       .then(function (result) {
@@ -425,19 +437,18 @@ angular.module('starter.controllers', ['ionic'])
             
       });
   }
-
+  
   function create(object){
     WorkoutExerciseModel.create(object)
       .then(function (result) {
         cancelCreate();
         getAll();
         
-        $state.go("tab.analysis");
       });
   }
   
   function initCreateForm() {
-    wte.newObject = { name: '', exercises: ''}; 
+    wte.newObject = { exerciseId: '', workoutId: ''}; 
   }
   
   function setEdited(object) {
@@ -458,7 +469,6 @@ angular.module('starter.controllers', ['ionic'])
     initCreateForm();
     wte.isCreating = false;
   }
-  
   wte.objects = [];
   wte.edited = null;
   wte.isEditing = false;
@@ -475,20 +485,20 @@ angular.module('starter.controllers', ['ionic'])
   
   initCreateForm();
   getAll();
-
 })
 
 //contoller create workouts
 .controller('WorkoutEditorCtrl', function($rootScope, $scope, WorkoutModel, $state, Backand, formData) {
+  
   var cm = this;
-  var workout;
+  //var workout;
 
-  $scope.submitForm = function(workout) {
-    formData.updateForm(workout);
-    console.log("Retrieving form from service", formData.getForm());
-    $state.go('tab.sportworkout');
+  // $scope.submitForm = function(workout) {
+  //   formData.updateForm(workout);
+  //   console.log("Retrieving form from service", formData.getForm());
+  //   $state.go('tab.sportworkout');
     
-  };
+  // };
 
   function getAll(){
     WorkoutModel.all()
@@ -504,7 +514,8 @@ angular.module('starter.controllers', ['ionic'])
         cancelCreate();
         getAll();
         console.log(object);
-        $scope.submitForm(object);
+        // $scope.submitForm(object);
+        $state.go("tab.analysis");
       });
   }
   
@@ -613,17 +624,77 @@ angular.module('starter.controllers', ['ionic'])
 
 })
 
+//controller to access exercises
+.controller('ExercisesCtrl', function($rootScope, $scope, ExerciseListModel, $state, Backand) {
+  var ec = this;
+
+  function getAll(){
+    ExerciseListModel.all()
+      .then(function (result) {
+            ec.data = result.data.data;
+            
+      });
+  
+  }
+
+  function create(object){
+    ExerciseListModel.create(object)
+      .then(function (result) {
+        cancelCreate();
+        getAll();
+        
+        $state.go("tab.analysis");
+      });
+  }
+  
+  function initCreateForm() {
+    ec.newObject = { name: '', exercises: ''}; 
+  }
+  
+  function setEdited(object) {
+    ec.edited = angular.copy(object);
+    ec.isEditing = true;
+  }
+  
+  function isCurrent(id) {
+    return ec.edited !== null && ec.edited.id === id;
+  }
+  
+  function cancelEditing() {
+    ec.edited = null;
+    ec.isEditing = false;
+  }
+  
+  function cancelCreate() {
+    initCreateForm();
+    ec.isCreating = false;
+  }
+  
+  ec.objects = [];
+  ec.edited = null;
+  ec.isEditing = false;
+  ec.isCreating = false;
+  ec.getAll = getAll;
+  ec.create = create;
+  ec.setEdited = setEdited;
+  ec.isCurrent = isCurrent;
+  ec.cancelEditing = cancelEditing;
+  ec.cancelCreate = cancelCreate;
+  $rootScope.$on("authorized", function() {
+    getAll();
+  });
+  
+  initCreateForm();
+  getAll();
+
+
+})
+
 .controller('AnalysisCtrl', function($rootScope, $scope, Backand, $state) {
   
 })
 
-.controller('ReferencesCtrl', function($scope) {
 
-})
-
-.controller('ReferencesLinksCtrl', function($scope) {
-  
-})
 
 .controller('AccountCtrl', function($scope, Backand, $state) {
 

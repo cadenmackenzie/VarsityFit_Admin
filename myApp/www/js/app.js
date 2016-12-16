@@ -27,28 +27,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
 
 .config(function(BackandProvider, $stateProvider, $urlRouterProvider, $httpProvider) {
 
-/*  
-  var appName = 'varsityfit';
-  $httpProvider.interceptors.push(httpInterceptor);
-  
-  BackandProvider.setAppName('varsityfit'); // change here to your app name
-  BackandProvider.setSignUpToken('4ce88904-75c5-412c-8365-df97d9e18a8f'); //token that enable sign up. see http://docs.backand.com/en/latest/apidocs/security/index.html#sign-up
-  BackandProvider.setAnonymousToken('85e64ce8-9e56-4543-b071-961ae65a4f28'); // token is for anonymous login. see http://docs.backand.com/en/latest/apidocs/security/index.html#anonymous-access
-  // Ionic uses AngularUI Router which uses the concept of states
-  // Learn more here: https://github.com/angular-ui/ui-router
-  // Set up the various states which the app can be in.
-  // Each state's controller can be found in controllers.js
-  
-    function httpInterceptor($q, $log, $cookieStore) {
-       return {
-         request: function(config) {
-           config.headers['Authorization'] = 
-             $cookieStore.get('backand_token');
-           return config;
-         }
-       };
-    }
-*/
+
 
   $stateProvider
   
@@ -65,27 +44,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     abstract: true,
     templateUrl: 'templates/tabs.html'
   })
-/*
- 
-  .state('login', {
-    url: '/login',
-    templateUrl: 'templates/login.html'
-    controller: 'LoginCtrl as login'
-  })
-*/
-  // Each tab has its own nav history stack:
-/*
-  .state('tab.login', {
-    url: '/login',
-    views: {
-      'tab-login': {
-        templateUrl: 'templates/tab-login.html',
-        controller: 'LoginCtrl as login'
-      }
-    }
-  })
 
-*/
 
 
 
@@ -195,30 +154,3 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     
 });
 
-/*
-  .run(function ($rootScope, $state, LoginService, Backand) {
-
-        function unauthorized() {
-            console.log("user is unauthorized, sending to login");
-            $state.go('login');
-        }
-
-      //  function signout() {
-        //    LoginService.signout();
-        //}
-
-        $rootScope.$on('unauthorized', function () {
-            unauthorized();
-        });
-
-        $rootScope.$on('$stateChangeSuccess', function (event, toState) {
-            if (toState.name == 'login') {
-                signout();
-            }
-            else if (toState.name != 'login' && Backand.getToken() === undefined) {
-                unauthorized();
-            }
-        });
-
-    })
-*/

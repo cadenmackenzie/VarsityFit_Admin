@@ -125,7 +125,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       views: {
         'tab-sport': {
           templateUrl: 'templates/tab-sporteditor.html',
-          controller: 'SportEditorCtrl as sm'
+          controller: 'SportEditorCtrl as usm'
         }
       }
     }) 
@@ -148,6 +148,29 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       }
     }
   });
+  
+  //   .state('requestResetPassword', {
+  //   url: '/requestResetPassword',
+  //   templateUrl: 'templates/requestResetPassword.html',
+  //   controller: 'LoginCtrl as login'
+  // })
+  
+  // .state('resetPassword', {
+  //   url: '/resetPassword',
+  //   templateUrl: 'templates/resetPassword.html',
+  //   controller: 'LoginCtrl as login'
+    
+  // })
+  
+  //   .state('tab.changepassword', {
+  //   url: '/changepassword', 
+  //   views: {
+  //     'tab-account': {
+  //         templateUrl: 'templates/tab-changepassword.html',
+  //         controller: 'LoginCtrl as login'  
+  //     }
+  //   }
+  // });
 
   // if none of the above states are matched, use this as the fallback
   //$urlRouterProvider.otherwise('/tab/login');

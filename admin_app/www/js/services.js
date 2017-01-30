@@ -191,6 +191,14 @@ angular.module('starter.services', [])
         service.create = function (object) {
             return $http.post(getUrl(), object);
         };
+        
+        service.delete = function (id) {
+            console.log("url", getUrl());
+          return $http({
+          method: 'DELETE',
+          url : Backand.getApiUrl() + '/1/objects/' + "users_sports" + '/' + id
+      })
+        };
     })
 
     .service('SportWorkoutModel', function ($http, Backand) {
@@ -258,7 +266,7 @@ angular.module('starter.services', [])
         };
     })
 
-    .service('LoginService', function (Backand) {
+    .service('LoginService', function ($http, Backand) {
         var service = this;
         service.signin = function (email, password, appName) {
             Backand.setAppName(appName);
@@ -270,7 +278,39 @@ angular.module('starter.services', [])
             return Backand.signOut();
         };
         
-        
+        service.resetPassword = function (resetToken, newPassword) {
+          return $http({
+              method: 'POST',
+              url : Backand.getApiUrl() + '/1/user/resetPassword',
+              data: 
+                {
+                  "resetToken": resetToken,
+                  "newPassword": newPassword
+                }
+          });
+      };
+            service.requestResetPassword = function (userName) {
+             return $http({
+                  method: 'POST',
+                  url : Backand.getApiUrl() + '/1/user/requestResetPassword',
+                  data: 
+                    {
+                      "appName": 'varsityfit',
+                      "username": userName
+                    }
+             });
+            };
+         service.changePassword = function (oldPassword, newPassword) {
+          return $http({
+              method: 'POST',
+              url : Backand.getApiUrl() + '/1/user/changePassword',
+              data: 
+                {
+                  "oldPassword": oldPassword,
+                  "newPassword": newPassword
+                }
+          })
+      };
     })
     
     .service('AccountService', function(Backand){

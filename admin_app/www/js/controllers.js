@@ -1,57 +1,105 @@
 angular.module('starter.controllers', ['ionic'])
 
-.controller('LoginCtrl', function($rootScope, $scope, $state, LoginService, Backand) {
+.controller('LoginCtrl', function($rootScope, $scope, $state, LoginService, Backand, $ionicPopup) {
     
     var login = this;
-    
+    var token;
     function signin() {
       var appName = 'varsityfit';
       LoginService.signin(login.email, login.password, appName)
         .then (function() {
-          console.log("login.signin")
+          console.log("login.signin");
           $rootScope.$broadcast("authorized");
           $state.go("tab.analysis");
           
         }, function(error){
-          console.log(error);
+          console.log(JSON.stringify(error));
           
         });
     }
 
     login.signin = signin;
 
+    
+    // function requestResetPassword() {
+    //   LoginService.requestResetPassword(login.userName)
+    //     .then(function() {
+    //       token = Backand.getToken();
+    //       $rootScope.$broadcast("successful");
+    //       $state.go("resetPassword");
+    //     }, function(error){
+    //       console.log(error);
+    //     });
+    // }
+    
+    // login.requestResetPassword = requestResetPassword;
+    
+    // function resetPassword() {
+    //   LoginService.resetPassword(login.resetToken, login.newPassword)
+    //     .then (function() {
+    //       $rootScope.$broadcast("authorized");
+    //       alert('Your password was successfully changed');
+    //       $state.go("login");
+    //     }, function(error) {
+    //       console.log(error);
+    //     });
+    // }
+    
+    // login.resetPassword = resetPassword;
+
+    // function changePassword() {
+    //   if (login.newPassword == login.newPassword2) {
+    //     LoginService.changePassword(login.oldPassword, login.newPassword)
+    //       .then(function() {
+    //         $rootScope.$broadcast("successful");
+    //         $state.go("tab.account");
+    //       }, function(error) {
+    //         console.log(error);
+    //       });
+    //   }
+    // }
+    
+    // login.changePassword = changePassword;
 
 }) 
 
 //controller to access users
-.controller('UserCtrl', function($rootScope, $scope, UserModel, $state, Backand, SportModel) {
+.controller('UserCtrl', function($rootScope, $scope, UserModel, $state, Backand) {
   var cm = this;
+  var temp_array = [];
+  var temp_array2 = [];
   function getAll(){
     UserModel.all()
       .then(function (result) {
+            console.log("doing it all", result.data.data);
             cm.data = result.data.data;
-            
+            cm.data.forEach(function(__metadata){
+            var added = false;
+              var s_arr = __metadata.users_sports.split(",");
+              s_arr.forEach(function(sport_id){
+                if ($scope.sport.id == parseInt(sport_id)){
+                  temp_array.push({"firstName": __metadata.firstName , 
+                  "lastName": __metadata.lastName, 
+                  "id": __metadata.id, 
+                  "check": true});
+                  added = true;
+                }
+              });
+              //console.log("md", JSON.stringify(__metadata));
+              if (!added){
+                temp_array2.push({"firstName": __metadata.firstName , 
+                "lastName": __metadata.lastName, 
+                "id": __metadata.id, 
+                "check": false});
+              }
+            });
+            cm.data = temp_array;
+            cm.data2 = temp_array2;
+            console.log(JSON.stringify(cm.data));
       });
   
   }
-  
-  function checkUsers(){
-    console.log("sport.name", JSON.stringify($scope.sport.id))
-    var temp_users = []
-    UserModel.all()
-      .then(function (result) {
-         temp_users = result.data.data;
-      });
       
-    SportModel.fetch($scope.sport.id)
-      .then(function (result) {
-        console.log("results", JSON.stringify(result));
-        var temp_names = result.data.data;
-        console.log("tults", JSON.stringify(result.data.__metadata.descriptives));
-        console.log("temp", JSON.stringify(result.data.users_sports));
-        
-        });
-  }
 
   function create(object){
     UserModel.create(object)
@@ -102,9 +150,6 @@ angular.module('starter.controllers', ['ionic'])
   
   initCreateForm();
   getAll();
-  checkUsers();
-
-
 })
 
 //controller to access sports
@@ -115,8 +160,9 @@ angular.module('starter.controllers', ['ionic'])
   
   
   $scope.submitForm = function(sport) {
+    //onsole.log("sport", JSON.stringify(sport))
     formData.updateForm(sport);
-    console.log(sport);
+    //console.log("sport", JSON.stringify(sport));
     // console.log("Retrieving form from service", formData.getForm());
     $state.go('tab.sporteditor');
     
@@ -140,6 +186,7 @@ angular.module('starter.controllers', ['ionic'])
         
         $state.go("tab.analysis");
       });
+      
   }
   
   function initCreateForm() {
@@ -187,8 +234,8 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 //controller to populate sports_users
-.controller('SportEditorCtrl', function($rootScope, $scope, UserSportModel, $state, Backand, formData) {
-  var sm = this;
+.controller('SportEditorCtrl', function($rootScope, $scope, UserSportModel, $state, Backand, formData, SportModel) {
+  var usm = this;
 
   $scope.user = {};
   $scope.users = {};
@@ -201,19 +248,31 @@ angular.module('starter.controllers', ['ionic'])
   
   $scope.submitForm = function(user) {
     formData.updateForm(user);
-    console.log("Retrieving form from service", formData.getForm());
-    userId = user.id;
-    sm.newObject.user = userId;
-    sm.newObject.sport = sportId; 
-    sm.create(sm.newObject);
-    
-    
+    if (!user.check){
+      console.log("Add user to sport", JSON.stringify(formData.getForm()));
+      userId = user.id;
+      usm.newObject.user = userId;
+      usm.newObject.sport = sportId; 
+      usm.create(usm.newObject);
+      user.check = true;
+    }
+    else{
+      console.log("Remove user from sport", JSON.stringify(formData.getForm()));
+      usm.data.forEach(function(apple){
+            if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId)) ){
+              console.log("deleted", apple.id);
+              usm.remove(apple.id);
+              user.check = false;
+            }
+      });
+    }
+       $state.go($state.current, $scope.sport.id, {reload: true, inherit: false});
   };
   
   function getAll(){
     UserSportModel.all()
       .then(function (result) {
-            sm.data = result.data.data;
+            usm.data = result.data.data;
             
       });
   }
@@ -223,42 +282,50 @@ angular.module('starter.controllers', ['ionic'])
       .then(function (result) {
         cancelCreate();
         getAll();
-        
+        return result;
       });
   }
   
+  function remove(object){
+    var usp_p = UserSportModel.delete(object);
+    usp_p.then(function (result) {
+        cancelCreate();
+        getAll();
+      });
+  }
   function initCreateForm() {
-    sm.newObject = { userId: '', sportId: ''}; 
+    usm.newObject = { userId: '', sportId: ''}; 
   }
   
   function setEdited(object) {
-    sm.edited = angular.copy(object);
-    sm.isEditing = true;
+    usm.edited = angular.copy(object);
+    usm.isEditing = true;
   }
   
   function isCurrent(id) {
-    return sm.edited !== null && sm.edited.id === id;
+    return usm.edited !== null && usm.edited.id === id;
   }
   
   function cancelEditing() {
-    sm.edited = null;
-    sm.isEditing = false;
+    usm.edited = null;
+    usm.isEditing = false;
   }
   
   function cancelCreate() {
     initCreateForm();
-    sm.isCreating = false;
+    usm.isCreating = false;
   }
-  sm.objects = [];
-  sm.edited = null;
-  sm.isEditing = false;
-  sm.isCreating = false;
-  sm.getAll = getAll;
-  sm.create = create;
-  sm.setEdited = setEdited;
-  sm.isCurrent = isCurrent;
-  sm.cancelEditing = cancelEditing;
-  sm.cancelCreate = cancelCreate;
+  usm.objects = [];
+  usm.edited = null;
+  usm.isEditing = false;
+  usm.isCreating = false;
+  usm.getAll = getAll;
+  usm.create = create;
+  usm.remove = remove;
+  usm.setEdited = setEdited;
+  usm.isCurrent = isCurrent;
+  usm.cancelEditing = cancelEditing;
+  usm.cancelCreate = cancelCreate;
   $rootScope.$on("authorized", function() {
     getAll();
   });
@@ -353,7 +420,7 @@ angular.module('starter.controllers', ['ionic'])
     console.log("Retrieving form from service", formData.getForm());
     $state.go('tab.workoutsexercises');
     
-  }
+  };
 
   
 
@@ -754,6 +821,3 @@ angular.module('starter.controllers', ['ionic'])
   };
 
 });
-
-
-

@@ -121,6 +121,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       }
     })     
     .state('tab.sporteditor', {
+      cache: false,
       url: '/sporteditor',
       views: {
         'tab-sport': {

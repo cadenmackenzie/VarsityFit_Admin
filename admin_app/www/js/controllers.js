@@ -71,7 +71,7 @@ angular.module('starter.controllers', ['ionic'])
   function getAll(){
     UserModel.all()
       .then(function (result) {
-            console.log("doing it all", result.data.data);
+            //console.log("sport done", JSON.stringify($scope.sport));
             cm.data = result.data.data;
             cm.data.forEach(function(__metadata){
             var added = false;
@@ -85,7 +85,6 @@ angular.module('starter.controllers', ['ionic'])
                   added = true;
                 }
               });
-              //console.log("md", JSON.stringify(__metadata));
               if (!added){
                 temp_array2.push({"firstName": __metadata.firstName , 
                 "lastName": __metadata.lastName, 
@@ -95,9 +94,8 @@ angular.module('starter.controllers', ['ionic'])
             });
             cm.data = temp_array;
             cm.data2 = temp_array2;
-            console.log(JSON.stringify(cm.data));
-      });
-  
+            console.log("cm", JSON.stringify(cm.data));
+    });
   }
       
 
@@ -156,13 +154,12 @@ angular.module('starter.controllers', ['ionic'])
 .controller('SportCtrl', function($rootScope, $scope, SportModel, $state, Backand, formData) {
   var sm = this;
   
-  $scope.sport = {};
+  //$scope.sport = {};
   
   
   $scope.submitForm = function(sport) {
-    //onsole.log("sport", JSON.stringify(sport))
     formData.updateForm(sport);
-    //console.log("sport", JSON.stringify(sport));
+    console.log("sportsubmit", JSON.stringify(sport));
     // console.log("Retrieving form from service", formData.getForm());
     $state.go('tab.sporteditor');
     
@@ -186,7 +183,6 @@ angular.module('starter.controllers', ['ionic'])
         
         $state.go("tab.analysis");
       });
-      
   }
   
   function initCreateForm() {
@@ -240,8 +236,9 @@ angular.module('starter.controllers', ['ionic'])
   $scope.user = {};
   $scope.users = {};
   var userId;
-
+  
   $scope.sport = formData.getForm();
+  //console.log("sportedit",JSON.stringify($scope.sport));
   var sportId = $scope.sport.id;
 
   getAll();
@@ -261,12 +258,22 @@ angular.module('starter.controllers', ['ionic'])
       usm.data.forEach(function(apple){
             if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId)) ){
               console.log("deleted", apple.id);
-              usm.remove(apple.id);
+              var remove_p = usm.remove(apple.id);
               user.check = false;
             }
       });
     }
-       $state.go($state.current, $scope.sport.id, {reload: true, inherit: false});
+    
+      var p = SportModel.fetch(parseInt(sportId));
+      p.then(function(sport){
+        //console.log("sport info", JSON.stringify(sport));
+        var p1 = $state.go('tab.sport');
+        p1.then(function(result){
+          $scope.sport = sport;
+          formData.updateForm(sport.data);
+          $state.go('tab.sporteditor');
+        });
+      });
   };
   
   function getAll(){
@@ -338,7 +345,7 @@ angular.module('starter.controllers', ['ionic'])
 .controller('SportWorkoutCtrl', function($rootScope, $scope, SportWorkoutModel, $state, Backand, formData) {
   var swm = this;
 
-  $scope.workout = {};
+  //$scope.workout = {};
   getAll();
   
   $scope.submitForm = function(workout) {
@@ -422,21 +429,20 @@ angular.module('starter.controllers', ['ionic'])
     
   };
 
-  
-
-
   function getAll(){
     WorkoutListModel.all()
       .then(function (result) {
             wlc.data = result.data.data;
-            console.log(wlc.data);
+            console.log("sportwlc", JSON.stringify(wlc.workouts));
+            //console.log("wlc", JSON.stringify(wlc.data));
+            wlc.workouts = [{"label": $scope.sport.__metadata.descriptives.workouts.label.replace("&#39;", "'")}];
+            console.log("sportwlc", JSON.stringify(wlc.workouts));
+        
         //else {
           
         //}
       });
   }
-
- 
 
   function create(object){
     WorkoutListModel.create(object)

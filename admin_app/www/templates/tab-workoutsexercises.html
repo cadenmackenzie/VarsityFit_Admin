@@ -3,7 +3,7 @@
             <!--<form class="create-form" role="form" ng-submit="sm.create(newObject)" novalidate>-->
                 <div ng-controller="ExercisesCtrl as ec">
                   <div ng-if="!ec.isCreating && !ec.isEditing">
-                        <ion-checkbox ng-repeat="exercise in ec.data" ng-checked="exercise.checked" ng-click="submitForm(exercise)">
+                        <ion-checkbox ng-repeat="exercise in ec.check" ng-checked="true" ng-click="submitForm(exercise)">
                             {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
 
                         </ion-checkbox>

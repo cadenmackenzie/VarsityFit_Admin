@@ -94,7 +94,7 @@ angular.module('starter.controllers', ['ionic'])
             });
             cm.data = temp_array;
             cm.data2 = temp_array2;
-            console.log("cm", JSON.stringify(cm.data));
+           // console.log("cm", JSON.stringify(cm.data));
     });
   }
       
@@ -159,7 +159,7 @@ angular.module('starter.controllers', ['ionic'])
   
   $scope.submitForm = function(sport) {
     formData.updateForm(sport);
-    console.log("sportsubmit", JSON.stringify(sport));
+    //console.log("sportsubmit", JSON.stringify(sport));
     // console.log("Retrieving form from service", formData.getForm());
     $state.go('tab.sporteditor');
     
@@ -195,7 +195,6 @@ angular.module('starter.controllers', ['ionic'])
   }
   
   function isCurrent(id) {
-    console.log(sm);
     return sm.edited !== null && sm.edited.id === id;
   }
   
@@ -238,7 +237,6 @@ angular.module('starter.controllers', ['ionic'])
   var userId;
   
   $scope.sport = formData.getForm();
-  //console.log("sportedit",JSON.stringify($scope.sport));
   var sportId = $scope.sport.id;
 
   getAll();
@@ -349,7 +347,7 @@ angular.module('starter.controllers', ['ionic'])
   getAll();
   
   $scope.submitForm = function(workout) {
-    console.log(formData.updateForm(workout));
+    formData.updateForm(workout);
     console.log("Retrieving form from service", formData.getForm());
   };  
 
@@ -421,10 +419,9 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.workouts = {};
   
-  
   $scope.submitForm = function(workouts) {
     formData.updateForm(workouts);
-    console.log("Retrieving form from service", formData.getForm());
+    console.log("Retrieving form from wlc service", JSON.stringify(formData.getForm()));
     $state.go('tab.workoutsexercises');
     
   };
@@ -433,15 +430,19 @@ angular.module('starter.controllers', ['ionic'])
     WorkoutListModel.all()
       .then(function (result) {
             wlc.data = result.data.data;
-            console.log("sportwlc", JSON.stringify(wlc.workouts));
-            //console.log("wlc", JSON.stringify(wlc.data));
-            wlc.workouts = [{"label": $scope.sport.__metadata.descriptives.workouts.label.replace("&#39;", "'")}];
-            console.log("sportwlc", JSON.stringify(wlc.workouts));
-        
-        //else {
-          
-        //}
       });
+    console.log("got all");
+  }
+  
+  function getWorkouts(){
+    var workoutlist_p = WorkoutListModel.getWorkouts(parseInt($scope.sport.id));
+    workoutlist_p.then(function (result){
+      wlc.workouts = result.data.data;
+    }),
+    (function (error){
+      console.log("workout error", JSON.stringify(error));
+    });
+    
   }
 
   function create(object){
@@ -491,8 +492,13 @@ angular.module('starter.controllers', ['ionic'])
   });
   
   initCreateForm();
-  getAll();
-
+  
+  if (angular.isDefined($scope.sport)){
+    getWorkouts();
+  }
+  else{
+    getAll(); 
+  }
 
 
 })
@@ -507,13 +513,12 @@ angular.module('starter.controllers', ['ionic'])
 
   $scope.workouts = formData.getForm();
   var workoutId = $scope.workouts.id;
-  console.log(workoutId)
 
   //getAll();
   
   $scope.submitForm = function(exercise) {
     formData.updateForm(exercise);
-    console.log("Retrieving form from service", formData.getForm());
+    console.log("Retrieving form from ex service", JSON.stringify(formData.getForm()));
     exerciseId = exercise.id;
     wte.newObject.exercise = exerciseId;
     wte.newObject.workout = workoutId;
@@ -583,14 +588,14 @@ angular.module('starter.controllers', ['ionic'])
 .controller('WorkoutEditorCtrl', function($rootScope, $scope, WorkoutModel, $state, Backand, formData) {
   
   var cm = this;
-  //var workout;
+  var workout;
 
-  // $scope.submitForm = function(workout) {
-  //   formData.updateForm(workout);
-  //   console.log("Retrieving form from service", formData.getForm());
-  //   $state.go('tab.sportworkout');
+  $scope.submitForm = function(workout) {
+    formData.updateForm(workout);
+    console.log("Retrieving form from workout service", formData.getForm());
+    $state.go('tab.sportworkout');
     
-  // };
+  };
 
   function getAll(){
     WorkoutModel.all()
@@ -717,18 +722,33 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 //controller to access exercises
-.controller('ExercisesCtrl', function($rootScope, $scope, ExerciseListModel, $state, Backand) {
+.controller('ExercisesCtrl', function($ionicHistory, $rootScope, $scope, ExerciseListModel, WorkoutExerciseModel, $state, Backand) {
   var ec = this;
 
   function getAll(){
     ExerciseListModel.all()
       .then(function (result) {
             ec.data = result.data.data;
-            
       });
   
   }
-
+  console.log("backview", JSON.stringify($ionicHistory.backView()));
+  function getEx(){
+    var temp_ex = [];
+    var exlist_p = WorkoutExerciseModel.getEx(parseInt($scope.workouts.workout));
+    exlist_p.then(function (result){
+          console.log("check", JSON.stringify(result.data));
+          for (var ex in result.data.data){
+            var ex_p = ExerciseListModel.fetch(parseInt(result.data.data[ex].exercise));
+            ex_p.then(function (result){
+              console.log("ex_p result", JSON.stringify(result.data));
+              temp_ex.push(result.data);
+            });
+          }
+          ec.check = temp_ex;
+    });
+  }
+  
   function create(object){
     ExerciseListModel.create(object)
       .then(function (result) {
@@ -778,6 +798,7 @@ angular.module('starter.controllers', ['ionic'])
   
   initCreateForm();
   getAll();
+  getEx();
 
 
 })
@@ -794,7 +815,6 @@ angular.module('starter.controllers', ['ionic'])
   
   function userDetails() {
     var user = Backand.getUserDetails();
-    console.log(user);
     if(user.$$state.value !== null){
       $scope.currentUser = user.$$state.value.userId;
       vm.firstName = user.$$state.value.firstName;

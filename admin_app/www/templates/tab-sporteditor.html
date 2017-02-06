@@ -1,39 +1,31 @@
-<ion-side-menus enable-menu-with-back-views="true">
-    
-    <div ng-controller="WorkoutCtrl as wlc">
-<ion-side-menu side="right" expose-aside-when="large">
-     <ion-view view-title="workoutz">
-        <ion-content>
-                <div ng-if="!wlc.isCreating && !wlc.isEditing">
-                        <button class="button button-full button-calm no-padding" ng-repeat="workout in wlc.workouts"  ng-model="workout.name" ng-click= "submitForm(workout)">
-                            {{ workout.label }}
-                        </button>
-                </div>
-        </ion-content>
-    </ion-view>
-  </ion-side-menu>
-</div>
-<ion-side-menu-content>
-<div ng-controller="UserCtrl as cm">
 <ion-view view-title="{{sport.name}}">
         <ion-content>
             <!--<form class="create-form" role="form" ng-submit="sm.create(newoqbject)" novalidate>-->
-                
-                  <div ng-if="!cm.isCreating && !cm.isEditing">
-                        <ion-checkbox ng-repeat="user in cm.data" ng-model= "user.name" ng-checked="true" ng-click="submitForm(user)">
+                 <div ng-controller="UserCtrl as cm" ng-if="!cm.isCreating && !cm.isEditing">
+                    <div ng-repeat="user in cm.data | orderBy: 'firstName'" ng-model= "user.name" ng-click="submitForm(user)">
+                        <ion-checkbox style="width:74%; float:left" ng-checked="true">
                             {{ user.firstName}}  {{user.lastName}}
                         </ion-checkbox>
-                  </div>
-    
-            
-                  <div ng-if="!cm.isCreating && !cm.isEditing">
-                        <ion-checkbox ng-repeat="user in cm.data2" ng-model= "user.name" ng-click="submitForm(user)">
+                    </div>
+                    <div ng-repeat="user in cm.data2 | orderBy: 'firstname'" ng-model= "user.name" ng-click="submitForm(user)">
+                        <ion-checkbox style="width:74%; float:left">
                             {{ user.firstName}}  {{user.lastName}}
                         </ion-checkbox>
-                  </div>
+                    </div>
+                 </div>
+
+                <div ng-controller="WorkoutCtrl as wlc" ng-if="!wlc.isCreating && !wlc.isEditing">
+                    <div ng-repeat="workout in wlc.workouts" ng-model="workout.name">
+                        <button class="button button-calm" style="width:19%; padding:0px;" ng-click="submitForm(workout)">    
+                            {{ workout.__metadata.descriptives.workout.label }}
+                        </button>
+                        <button class="button button-assertive" style="width: 5%; display:block; padding:0px;">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            </section>
                   <!--<button class="button button-block button-dark" ng-click="submitForm(users)" type="submit">Submit</button>-->
               <!--</form>  -->
          </ion-content>
 </ion-view>
-</ion-side-menu-content>
-</ion-side-menus>

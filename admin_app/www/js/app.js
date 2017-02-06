@@ -48,9 +48,6 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     templateUrl: 'templates/tabs.html'
   })
 
-
-
-
   .state('tab.analysis', {
       url: '/analysis',
       views: {
@@ -62,6 +59,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     })
     
     .state('tab.workouteditor', {
+      cache: false,
       url: '/workouteditor',
       views: {
         'tab-workouteditor': {
@@ -82,6 +80,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     })
 
     .state('tab.workout', {
+      cache: false,
       url: '/workout',
       views: {
         'tab-workout': {
@@ -92,6 +91,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     })      
     
     .state('tab.workoutsexercises', {
+      cache: false,
       url: '/workoutsexercises',
       views: {
         'tab-workout': {

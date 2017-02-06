@@ -35,6 +35,19 @@ angular.module('starter.services', [])
         service.create = function (object) {
             return $http.post(getUrl(), object);
         };
+        
+        service.getEx = function (id) {
+            return $http ({
+              method: 'GET',
+              url: Backand.getApiUrl() + baseUrl + objectName,
+              params: {
+                  pageSize: '20',
+                  pageNumber: '1',
+                  deep: true,
+                  filter: [{"fieldName": "workout", "operator": "in", "value": id}]
+              }
+            });
+        };
     })
 
     .service('ExerciseModel', function ($http, Backand) {
@@ -138,6 +151,18 @@ angular.module('starter.services', [])
 
         service.create = function (object) {
             return $http.post(getUrl(), object);
+        };
+        
+        service.getWorkouts = function (id) {
+            return $http ({
+              method: 'GET',
+              url: Backand.getApiUrl() + baseUrl + 'sports_workouts/',
+              params: {
+                  pageSize: '20',
+                  pageNumber: '1',
+                  filter: [{"fieldName": "sport", "operator": "in", "value": id}]
+              }
+            });
         };
     }) 
     

@@ -116,7 +116,11 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(),{
+                params:{
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -125,6 +129,21 @@ angular.module('starter.services', [])
 
         service.create = function (object) {
             return $http.post(getUrl(), object);
+        };
+        
+        service.getUsers = function (id) {
+            return $http ({
+              method: 'GET',
+              url: Backand.getApiUrl() + baseUrl + 'users_sports/',
+              params: {
+                  pageSize: '20',
+                  pageNumber: '1',
+                  filter: [{"fieldName": "sport", "operator": "in", "value": id}],
+                  deep: true,
+                  relatedObjects: true,
+                  exclude: "metadata, totalrows"
+              }
+            });
         };
     })  
     
@@ -142,7 +161,11 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(),{
+                params:{
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -160,7 +183,10 @@ angular.module('starter.services', [])
               params: {
                   pageSize: '20',
                   pageNumber: '1',
-                  filter: [{"fieldName": "sport", "operator": "in", "value": id}]
+                  filter: [{"fieldName": "sport", "operator": "in", "value": id}],
+                  deep: true,
+                  relatedObjects: true,
+                  exclude: "metadata, totalrows"
               }
             });
         };

@@ -59,7 +59,6 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
     })
     
     .state('tab.workouteditor', {
-      cache: false,
       url: '/workouteditor',
       views: {
         'tab-workouteditor': {

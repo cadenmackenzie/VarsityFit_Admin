@@ -1,5 +1,28 @@
 angular.module('starter.controllers', ['ionic'])
 
+.filter('userFilter', function(){
+  return function(user, searchText){
+    var filteredUsers = []
+    
+    //console.log("userinfilt", JSON.stringify(user));
+    
+    searchText = searchText || '' ;
+    if (searchText.val == ''){
+      return user;
+    }
+    searchText.val = searchText.val.toLowerCase();
+    console.log("filt", JSON.stringify(searchText)); 
+    for (var obj in user){
+      var a_user = user[obj];
+      if ((a_user.firstName.toLowerCase().includes(searchText.val)) || (a_user.lastName.toLowerCase().includes(searchText.val))){
+        filteredUsers.push(a_user);
+      }
+    }
+    
+    return filteredUsers;
+  };
+})
+
 .controller('LoginCtrl', function($rootScope, $scope, $state, LoginService, Backand, $ionicPopup) {
     
     var login = this;
@@ -14,7 +37,6 @@ angular.module('starter.controllers', ['ionic'])
           
         }, function(error){
           console.log(JSON.stringify(error));
-          
         });
     }
 
@@ -68,37 +90,86 @@ angular.module('starter.controllers', ['ionic'])
   var cm = this;
   var temp_array = [];
   var temp_array2 = [];
+  
+  if(!angular.isDefined($scope.searchText)){
+    console.log("init");
+    $scope.searchText = {};
+    $scope.searchText.val='';  
+  } 
+
   function getAll(){
-    UserModel.all()
-      .then(function (result) {
-            //console.log("sport done", JSON.stringify($scope.sport));
-            cm.data = result.data.data;
-            cm.data.forEach(function(__metadata){
-            var added = false;
-              var s_arr = __metadata.users_sports.split(",");
-              s_arr.forEach(function(sport_id){
-                if ($scope.sport.id == parseInt(sport_id)){
-                  temp_array.push({"firstName": __metadata.firstName , 
-                  "lastName": __metadata.lastName, 
-                  "id": __metadata.id, 
-                  "check": true});
-                  added = true;
-                }
-              });
-              if (!added){
-                temp_array2.push({"firstName": __metadata.firstName , 
-                "lastName": __metadata.lastName, 
-                "id": __metadata.id, 
-                "check": false});
-              }
-            });
-            cm.data = temp_array;
-            cm.data2 = temp_array2;
-           // console.log("cm", JSON.stringify(cm.data));
+    var notuser = [];
+    UserModel.getUsers($scope.sport.id)
+    .then(function (result) {
+      //console.log("baba", JSON.stringify(result.data));
+      //console.log("gup", JSON.stringify(result.data.relatedObjects.users));
+      var tempo_users = result.data.relatedObjects.users;
+      for (var user in tempo_users){
+        var b = tempo_users[user];
+        //b.check = true;
+        temp_array.push(tempo_users[user]);
+      }
+      
+      UserModel.all()
+      .then(function(result){
+        var da = result.data.data;
+       
+          var fake_array = []
+          var bu;
+          for (var baduser in da){
+          bu = da[baduser];
+        //  console.log("bu da", angular.toJson(bu));
+          
+           // console.log("temp_user", JSON.stringify(temp_array[temp_user]));
+           //console.log("just checkin", JSON.stringify(temp_array[temp_user].id == bu.id));
+           var a = !angular.toJson(notuser).includes(angular.toJson(bu));
+           var b =  !angular.toJson(temp_array).includes(bu);
+          // console.log("a, b", JSON.stringify(a), JSON.stringify(b));
+           
+            if (!(notuser.includes(angular.toJson(bu))) && !angular.toJson(temp_array).includes(angular.toJson(bu))){
+              notuser.push(bu);
+          }
+        }
+      });
+        cm.data = temp_array;
+        cm.data2 = notuser;
     });
+    
+   
+    
+  
+
+    // UserModel.all()
+    //   .then(function (result) {
+    //         //console.log("sport done", JSON.stringify($scope.sport));
+    //         cm.data = result.data.data;
+
+    //         cm.data.forEach(function(__metadata){
+    //         var added = false;
+    //           var s_arr = __metadata.users_sports.split(",");
+    //           s_arr.forEach(function(sport_id){
+    //             if ($scope.sport.id == parseInt(sport_id)){
+    //               temp_array.push({"firstName": __metadata.firstName , 
+    //               "lastName": __metadata.lastName, 
+    //               "id": __metadata.id, 
+    //               "check": true});
+    //               added = true;
+    //             }
+    //           });
+    //           if (!added){
+    //             temp_array2.push({"firstName": __metadata.firstName , 
+    //             "lastName": __metadata.lastName, 
+    //             "id": __metadata.id, 
+    //             "check": false});
+    //           }
+    //         });
+    //         cm.data = temp_array;
+    //         cm.data2 = temp_array2;
+    //       // console.log("cm", JSON.stringify(cm.data));
+    // });
   }
       
-
+  
   function create(object){
     UserModel.create(object)
       .then(function (result) {
@@ -142,6 +213,7 @@ angular.module('starter.controllers', ['ionic'])
   cm.isCurrent = isCurrent;
   cm.cancelEditing = cancelEditing;
   cm.cancelCreate = cancelCreate;
+  //cm.oninput = $scope.userfilter();
   $rootScope.$on("authorized", function() {
     getAll();
   });
@@ -241,15 +313,33 @@ angular.module('starter.controllers', ['ionic'])
 
   getAll();
   
-  $scope.submitForm = function(user) {
+  $scope.submitForm = function(user, check) {
+    console.log("check", JSON.stringify(check));  
+    console.log("hi", JSON.stringify(user.id));
+    var ul, li;
+    
+    ul = document.getElementById("users");
+    console.log("ul", JSON.stringify(ul));
+    
+    li = ul.getElementsByTagName('li');
+   // console.log("2li", JSON.stringify(li[user.firstName].firstElementChild.attributes.item(1).value = false));
+   // console.log("ul", JSON.stringify(document.documentElement.innerHTML));
+    
     formData.updateForm(user);
-    if (!user.check){
+    console.log(JSON.stringify(document.getElementsByName(user.id)));
+    //console.log("user", JSON.stringify(user));
+    console.log("is it tho", JSON.stringify(!angular.isDefined(li[user.firstName].firstElementChild.attributes.item(1))));
+    
+    if (check){
       console.log("Add user to sport", JSON.stringify(formData.getForm()));
       userId = user.id;
       usm.newObject.user = userId;
       usm.newObject.sport = sportId; 
       usm.create(usm.newObject);
-      user.check = true;
+      var typ = document.createAttribute("class")
+      typ.value = true;
+      li[user.firstName].firstElementChild.attributes.setNamedItem(typ);
+      //li[user.firstName].firstElementChild.attributes.item(1).value = true;
     }
     else{
       console.log("Remove user from sport", JSON.stringify(formData.getForm()));
@@ -257,7 +347,7 @@ angular.module('starter.controllers', ['ionic'])
             if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId)) ){
               console.log("deleted", apple.id);
               var remove_p = usm.remove(apple.id);
-              user.check = false;
+              li[user.firstName].firstElementChild.attributes.item(1).value = false;
             }
       });
     }
@@ -415,7 +505,9 @@ angular.module('starter.controllers', ['ionic'])
   var wlc = this;
   var userDetail;
   var workouts;
+  var temp_workouts;
   
+  console.log("in workoutctrl");
 
   $scope.workouts = {};
   
@@ -437,7 +529,28 @@ angular.module('starter.controllers', ['ionic'])
   function getWorkouts(){
     var workoutlist_p = WorkoutListModel.getWorkouts(parseInt($scope.sport.id));
     workoutlist_p.then(function (result){
-      wlc.workouts = result.data.data;
+      var temp_array = [];
+      var tempo_workouts = result.data.relatedObjects.workouts;
+      for (var workout in tempo_workouts){
+        temp_array.push(tempo_workouts[workout]);
+      }
+      wlc.workouts = temp_array;
+      
+       WorkoutListModel.all()
+      .then(function(result){
+        var workoutdata = result.data.data;
+       
+          var fake_array = [];
+          var a_workout;
+          for (var bad_workout in workoutdata){
+            a_workout = workoutdata[bad_workout];
+            //console.log("deez logs", JSON.stringify(angular.toJson(a_workout)), angular.toJson(wlc.workouts));
+            if (!(fake_array.includes(angular.toJson(a_workout))) && !angular.toJson(wlc.workouts).includes(angular.toJson(a_workout))){
+              fake_array.push(a_workout);
+          }
+        }
+          wlc.workouts2 = fake_array;
+      });
     }),
     (function (error){
       console.log("workout error", JSON.stringify(error));
@@ -589,19 +702,20 @@ angular.module('starter.controllers', ['ionic'])
   
   var cm = this;
   var workout;
-
+  console.log("in workedit");
+  
   $scope.submitForm = function(workout) {
     formData.updateForm(workout);
     console.log("Retrieving form from workout service", formData.getForm());
     $state.go('tab.sportworkout');
     
   };
-
+  
   function getAll(){
+    console.log("WorkoutEdit Getall");
     WorkoutModel.all()
       .then(function (result) {
             cm.data = result.data.data;
-            
       });
   }
   
@@ -617,6 +731,7 @@ angular.module('starter.controllers', ['ionic'])
   }
   
   function initCreateForm() {
+    console.log("create form");
     cm.newObject = { name: ''}; 
   }
  
@@ -655,6 +770,7 @@ angular.module('starter.controllers', ['ionic'])
   
   initCreateForm();
   getAll();
+  
 
 })
 

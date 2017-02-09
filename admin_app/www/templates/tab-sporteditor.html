@@ -1,7 +1,7 @@
 <ion-view view-title="{{sport.name}}">
         <ion-content>
             <!--<form class="create-form" role="form" ng-submit="sm.create(newoqbject)" novalidate>-->
-                <ul class = "list" id="users" style="width:74%; float:left">
+                <ul class = "list" id="users" style="width:75%; float:left">
                 <li class="item" style="font-size: 30px;  font-weight: 500;">Athletes</li>
                  <div ng-controller="UserCtrl as cm" ng-if="!cm.isCreating && !cm.isEditing">
                     <div ng-repeat="user in cm.data | orderBy: 'firstName'" ng-model= "user.name" ng-click="removeUser(user)">
@@ -12,16 +12,14 @@
                             </label>
                         </li>
                     </div>
-                    <div>
-                        <li><h2 class="item" style="font-size: 30px;  font-weight: 500;">Other Athletes</h2></li>
-                    </div>
+                        <li class="item" style="font-size: 30px;  font-weight: 500;">Other Athletes</li>
                 <li class= "item">
                 <label class="item-input-wrapper">
                 <i class="icon ion-ios-search placeholder-icon"></i>
-                <input class = "item-input-wrapper" style="width:100%;"type="text" placeholder="search" ng-model='searchText.val'></input>
+                <input class = "item-input-wrapper" type="text" placeholder="search" ng-model='searchText.val'></input>
                 </label>
                 </li>
-                    <div id="Abbe" ng-model= "user.name" ng-repeat="user in cm.data2 | userFilter:searchText"  ng-click="addForm(user)">
+                    <div id="Abbe" ng-model= "user.name" ng-repeat="user in cm.data2 | userFilter:searchText"  ng-click="addUser(user)">
                         <li class="item item-checkbox" id="{{user.firstName}}">
                             {{ user.firstName}}  {{user.lastName}}
                             <label class ="checkbox">
@@ -31,32 +29,30 @@
                     </div>
                 </div>
                 </ul>
-                <ul class = "list">
+                <ul class = "list" style="width:25%; float:left">
                 <li class="item" style="font-size: 30px;  font-weight: 500; text-align: center;">Current Workouts</li>
                 <div ng-controller="WorkoutCtrl as wlc" ng-if="!wlc.isCreating && !wlc.isEditing">
                     <div ng-repeat="workout in wlc.workouts | orderBy:name" ng-model="workout.name">
-                        <li class ="button button-calm" style="width:21%; float: left;">
+                        <li class ="button button-calm" style="width:80%; float: left;">
                         <label class="string" ng-click="submitForm(workout)">
                             {{ workout.name }}
                         </label>
                         </li>
-                        
-                        <li class="button button-assertive" ng-controller="SportWorkoutCtrl as swm" ng-click="swm.removeWorkout(workout)">
+                        <li class="button button-assertive" style="width:20%; float: left;" ng-controller="SportWorkoutCtrl as swm" ng-click="swm.removeWorkout(workout)">
                         <label class="string">
                             Remove
                         </label>
                         </li>
                     </div>
-                
                 <li class="item" style="font-size: 30px;  font-weight: 500; text-align: center;">Other Workouts</li>
                     <div ng-repeat="workout in wlc.workouts2" ng-model="workout.name">
-                        <li class ="button button-stable" style="width:21%; float: left;">
+                        <li class ="button button-stable" style="width:80%; float:left;">
                         <label class="string" ng-click="submitForm(workout)">
                             {{ workout.name }}
                         </label>
                         </li>
                         
-                        <li class="button button-balanced" style="width:5%;" ng-controller="SportWorkoutCtrl as swm" ng-click="swm.addWorkout(workout)">
+                        <li class="button button-balanced" style="width:20%; float:left;" ng-controller="SportWorkoutCtrl as swm" ng-click="swm.addWorkout(workout)">
                         <label class="string">
                             Add
                         </label>

@@ -18,7 +18,6 @@ angular.module('starter.controllers', ['ionic'])
         filteredUsers.push(a_user);
       }
     }
-    
     return filteredUsers;
   };
 })
@@ -88,7 +87,6 @@ angular.module('starter.controllers', ['ionic'])
 //controller to access users
 .controller('UserCtrl', function($rootScope, $scope, UserModel, $state, Backand) {
   var cm = this;
-  var temp_array = [];
   var temp_array2 = [];
   
   if(!angular.isDefined($scope.searchText)){
@@ -102,10 +100,10 @@ angular.module('starter.controllers', ['ionic'])
     cm.data = [];
     cm.data2 = [];
     var notuser = [];
+    var temp_array = [];
     UserModel.getUsers($scope.sport.id)
     .then(function (result) {
       var tempo_users = result.data.relatedObjects.users;
-      console.log("temp_users", JSON.stringify(tempo_users));
       for (var user in tempo_users){
         if (!angular.toJson(temp_array).includes(angular.toJson(user))){
           temp_array.push(tempo_users[user]);
@@ -292,6 +290,7 @@ angular.module('starter.controllers', ['ionic'])
   $scope.removeUser = function(user){
     console.log("removing user", JSON.stringify(user));
     usm.data.forEach(function(apple){
+      console.log("apple.sport?", JSON.stringify(apple));
       if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId))){
         console.log("deleted", apple.id);
         var remove_p = usm.remove(apple.id);
@@ -316,7 +315,7 @@ angular.module('starter.controllers', ['ionic'])
     var create_p = UserSportModel.create(object);
       create_p.then(function (result) {
         cancelCreate();
-        //getAll();
+        getAll();
       });
     return create_p;
   }
@@ -325,7 +324,7 @@ angular.module('starter.controllers', ['ionic'])
     var remove_p = UserSportModel.delete(object);
     remove_p.then(function (result) {
         cancelCreate();
-        //getAll();
+        getAll();
       });
     return remove_p;
   }

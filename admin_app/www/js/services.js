@@ -276,6 +276,14 @@ angular.module('starter.services', [])
         service.create = function (object) {
             return $http.post(getUrl(), object);
         };
+        
+        service.delete = function (id) {
+            console.log("url", getUrl());
+            return $http({
+                method: 'DELETE',
+                url : Backand.getApiUrl() + '/1/objects/' + "sports_workouts" + '/' + id
+            });
+        };
     })
 
     .service('ExerciseListModel', function ($http, Backand) {

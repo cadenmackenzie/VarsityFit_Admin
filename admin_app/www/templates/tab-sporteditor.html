@@ -4,7 +4,7 @@
                 <ul class = "list" id="users" style="width:74%; float:left">
                 <li class="item" style="font-size: 30px;  font-weight: 500;">Athletes</li>
                  <div ng-controller="UserCtrl as cm" ng-if="!cm.isCreating && !cm.isEditing">
-                    <div ng-repeat="user in cm.data | orderBy: 'firstName'" ng-model= "user" ng-click="submitForm(user, false)">
+                    <div ng-repeat="user in cm.data | orderBy: 'firstName'" ng-model= "user.name" ng-click="removeUser(user)">
                         <li class="item item-checkbox" id="{{user.firstName}}">
                             {{ user.firstName}}  {{user.lastName}}
                             <label class ="checkbox" checked="true">
@@ -21,7 +21,7 @@
                 <input class = "item-input-wrapper" style="width:100%;"type="text" placeholder="search" ng-model='searchText.val'></input>
                 </label>
                 </li>
-                    <div id="Abbe" ng-model= "user.name" ng-repeat="user in cm.data2 | userFilter:searchText"  ng-click="submitForm(user, true)">
+                    <div id="Abbe" ng-model= "user.name" ng-repeat="user in cm.data2 | userFilter:searchText"  ng-click="addForm(user)">
                         <li class="item item-checkbox" id="{{user.firstName}}">
                             {{ user.firstName}}  {{user.lastName}}
                             <label class ="checkbox">
@@ -34,23 +34,21 @@
                 <ul class = "list">
                 <li class="item" style="font-size: 30px;  font-weight: 500; text-align: center;">Current Workouts</li>
                 <div ng-controller="WorkoutCtrl as wlc" ng-if="!wlc.isCreating && !wlc.isEditing">
-                    <div ng-repeat="workout in wlc.workouts" ng-model="workout.name">
+                    <div ng-repeat="workout in wlc.workouts | orderBy:name" ng-model="workout.name">
                         <li class ="button button-calm" style="width:21%; float: left;">
                         <label class="string" ng-click="submitForm(workout)">
                             {{ workout.name }}
                         </label>
                         </li>
                         
-                        <li class="button button-assertive">
+                        <li class="button button-assertive" ng-controller="SportWorkoutCtrl as swm" ng-click="swm.removeWorkout(workout)">
                         <label class="string">
                             Remove
                         </label>
                         </li>
                     </div>
-                </div>
                 
                 <li class="item" style="font-size: 30px;  font-weight: 500; text-align: center;">Other Workouts</li>
-                <div ng-controller="WorkoutCtrl as wlc" ng-if="!wlc.isCreating && !wlc.isEditing">
                     <div ng-repeat="workout in wlc.workouts2" ng-model="workout.name">
                         <li class ="button button-stable" style="width:21%; float: left;">
                         <label class="string" ng-click="submitForm(workout)">
@@ -58,7 +56,7 @@
                         </label>
                         </li>
                         
-                        <li class="button button-balanced" style="width:5%;">
+                        <li class="button button-balanced" style="width:5%;" ng-controller="SportWorkoutCtrl as swm" ng-click="swm.addWorkout(workout)">
                         <label class="string">
                             Add
                         </label>

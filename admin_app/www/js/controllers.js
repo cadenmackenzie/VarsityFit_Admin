@@ -98,84 +98,48 @@ angular.module('starter.controllers', ['ionic'])
   } 
 
   function getAll(){
+    console.log("getAll Users");
+    cm.data = [];
+    cm.data2 = [];
     var notuser = [];
     UserModel.getUsers($scope.sport.id)
     .then(function (result) {
-      //console.log("baba", JSON.stringify(result.data));
-      //console.log("gup", JSON.stringify(result.data.relatedObjects.users));
       var tempo_users = result.data.relatedObjects.users;
+      console.log("temp_users", JSON.stringify(tempo_users));
       for (var user in tempo_users){
-        var b = tempo_users[user];
-        //b.check = true;
-        temp_array.push(tempo_users[user]);
+        if (!angular.toJson(temp_array).includes(angular.toJson(user))){
+          temp_array.push(tempo_users[user]);
+        }
       }
+      cm.data = temp_array;
       
       UserModel.all()
       .then(function(result){
         var da = result.data.data;
-       
-          var fake_array = []
-          var bu;
-          for (var baduser in da){
+        var fake_array = []
+        var bu;
+        
+        for (var baduser in da){
           bu = da[baduser];
-        //  console.log("bu da", angular.toJson(bu));
-          
-           // console.log("temp_user", JSON.stringify(temp_array[temp_user]));
-           //console.log("just checkin", JSON.stringify(temp_array[temp_user].id == bu.id));
-           var a = !angular.toJson(notuser).includes(angular.toJson(bu));
-           var b =  !angular.toJson(temp_array).includes(bu);
-          // console.log("a, b", JSON.stringify(a), JSON.stringify(b));
-           
-            if (!(notuser.includes(angular.toJson(bu))) && !angular.toJson(temp_array).includes(angular.toJson(bu))){
-              notuser.push(bu);
+          if (!(notuser.includes(angular.toJson(bu))) && 
+              !angular.toJson(temp_array).includes(angular.toJson(bu))){
+            notuser.push(bu);
           }
         }
-      });
-        cm.data = temp_array;
         cm.data2 = notuser;
+      });
+
+        
+        console.log("cm.data", JSON.stringify(cm.data));
     });
-    
-   
-    
-  
 
-    // UserModel.all()
-    //   .then(function (result) {
-    //         //console.log("sport done", JSON.stringify($scope.sport));
-    //         cm.data = result.data.data;
-
-    //         cm.data.forEach(function(__metadata){
-    //         var added = false;
-    //           var s_arr = __metadata.users_sports.split(",");
-    //           s_arr.forEach(function(sport_id){
-    //             if ($scope.sport.id == parseInt(sport_id)){
-    //               temp_array.push({"firstName": __metadata.firstName , 
-    //               "lastName": __metadata.lastName, 
-    //               "id": __metadata.id, 
-    //               "check": true});
-    //               added = true;
-    //             }
-    //           });
-    //           if (!added){
-    //             temp_array2.push({"firstName": __metadata.firstName , 
-    //             "lastName": __metadata.lastName, 
-    //             "id": __metadata.id, 
-    //             "check": false});
-    //           }
-    //         });
-    //         cm.data = temp_array;
-    //         cm.data2 = temp_array2;
-    //       // console.log("cm", JSON.stringify(cm.data));
-    // });
   }
       
-  
   function create(object){
     UserModel.create(object)
       .then(function (result) {
         cancelCreate();
         getAll();
-        
         $state.go("tab.analysis");
       });
   }
@@ -218,6 +182,12 @@ angular.module('starter.controllers', ['ionic'])
     getAll();
   });
   
+  $scope.$on("changedUsers", function(event){
+    console.log("changedUsers Listener");
+    getAll();
+    //$scope.$apply();
+  });
+  
   initCreateForm();
   getAll();
 })
@@ -231,8 +201,6 @@ angular.module('starter.controllers', ['ionic'])
   
   $scope.submitForm = function(sport) {
     formData.updateForm(sport);
-    //console.log("sportsubmit", JSON.stringify(sport));
-    // console.log("Retrieving form from service", formData.getForm());
     $state.go('tab.sporteditor');
     
   };
@@ -241,9 +209,6 @@ angular.module('starter.controllers', ['ionic'])
     SportModel.all()
       .then(function (result) {
             sm.data = result.data.data;
-        //else {
-          
-        //}
       });
   }
   
@@ -313,80 +278,56 @@ angular.module('starter.controllers', ['ionic'])
 
   getAll();
   
-  $scope.submitForm = function(user, check) {
-    console.log("check", JSON.stringify(check));  
-    console.log("hi", JSON.stringify(user.id));
-    var ul, li;
-    
-    ul = document.getElementById("users");
-    console.log("ul", JSON.stringify(ul));
-    
-    li = ul.getElementsByTagName('li');
-   // console.log("2li", JSON.stringify(li[user.firstName].firstElementChild.attributes.item(1).value = false));
-   // console.log("ul", JSON.stringify(document.documentElement.innerHTML));
-    
-    formData.updateForm(user);
-    console.log(JSON.stringify(document.getElementsByName(user.id)));
-    //console.log("user", JSON.stringify(user));
-    console.log("is it tho", JSON.stringify(!angular.isDefined(li[user.firstName].firstElementChild.attributes.item(1))));
-    
-    if (check){
-      console.log("Add user to sport", JSON.stringify(formData.getForm()));
+  $scope.addUser = function(user){
+     console.log("Add user to sport", JSON.stringify(formData.getForm()));
       userId = user.id;
       usm.newObject.user = userId;
       usm.newObject.sport = sportId; 
-      usm.create(usm.newObject);
-      var typ = document.createAttribute("class")
-      typ.value = true;
-      li[user.firstName].firstElementChild.attributes.setNamedItem(typ);
-      //li[user.firstName].firstElementChild.attributes.item(1).value = true;
-    }
-    else{
-      console.log("Remove user from sport", JSON.stringify(formData.getForm()));
-      usm.data.forEach(function(apple){
-            if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId)) ){
-              console.log("deleted", apple.id);
-              var remove_p = usm.remove(apple.id);
-              li[user.firstName].firstElementChild.attributes.item(1).value = false;
-            }
+      var add_p = usm.create(usm.newObject);
+      add_p.then(function(){
+        $rootScope.$broadcast("changedUsers"); 
       });
-    }
-    
-      var p = SportModel.fetch(parseInt(sportId));
-      p.then(function(sport){
-        //console.log("sport info", JSON.stringify(sport));
-        var p1 = $state.go('tab.sport');
-        p1.then(function(result){
-          $scope.sport = sport;
-          formData.updateForm(sport.data);
-          $state.go('tab.sporteditor');
+  };
+  
+  $scope.removeUser = function(user){
+    console.log("removing user", JSON.stringify(user));
+    usm.data.forEach(function(apple){
+      if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId))){
+        console.log("deleted", apple.id);
+        var remove_p = usm.remove(apple.id);
+        remove_p.then(function(){
+          $rootScope.$broadcast("changedUsers");
         });
-      });
+      }
+    });
+  };
+  
+  $scope.submitForm = function(user) {
   };
   
   function getAll(){
     UserSportModel.all()
       .then(function (result) {
             usm.data = result.data.data;
-            
       });
   }
   
   function create(object){
-    UserSportModel.create(object)
-      .then(function (result) {
+    var create_p = UserSportModel.create(object);
+      create_p.then(function (result) {
         cancelCreate();
-        getAll();
-        return result;
+        //getAll();
       });
+    return create_p;
   }
   
   function remove(object){
-    var usp_p = UserSportModel.delete(object);
-    usp_p.then(function (result) {
+    var remove_p = UserSportModel.delete(object);
+    remove_p.then(function (result) {
         cancelCreate();
-        getAll();
+        //getAll();
       });
+    return remove_p;
   }
   function initCreateForm() {
     usm.newObject = { userId: '', sportId: ''}; 
@@ -430,7 +371,7 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 //controller to populate sports_workouts
-.controller('SportWorkoutCtrl', function($rootScope, $scope, SportWorkoutModel, $state, Backand, formData) {
+.controller('SportWorkoutCtrl', function($timeout, $rootScope, $scope, SportWorkoutModel, $state, Backand, formData) {
   var swm = this;
 
   //$scope.workout = {};
@@ -448,18 +389,49 @@ angular.module('starter.controllers', ['ionic'])
             
       });
   }
-
-  function create(object){
-    SportWorkoutModel.create(object)
-      .then(function (result) {
-        cancelCreate();
-        getAll();
-
+  
+  function addWorkout(workout){
+    console.log("addWorkout", JSON.stringify($scope.sport.id));
+    swm.newObject.workout = workout.id;
+    swm.newObject.sport = $scope.sport.id;
+    var added_p = swm.create(swm.newObject);
+    added_p.then(function (result){
+      $rootScope.$broadcast('changedWorkouts', []); 
+    });
+  }
+  
+  function removeWorkout(workout){
+     swm.data.forEach(function(a_workout){
+      if ((parseInt(a_workout.workout) == workout.id && (parseInt(a_workout.sport) == $scope.sport.id)) ){
+        console.log("deleted", a_workout.id);
+        var removed_p = swm.removeW(a_workout.id);
+        removed_p.then(function (result){
+          $rootScope.$broadcast('changedWorkouts', []);
+          });
+        }
       });
+  };
+  function create(object){
+    var swm_p = SportWorkoutModel.create(object);
+      swm_p.then(function (result) {
+        cancelCreate();
+        //getAll();
+      });
+    return swm_p;
+  }
+  
+   function removeW(id){
+    var workout_p = SportWorkoutModel.delete(id);
+    workout_p.then(function (result) {
+      console.log("removedW", JSON.stringify(id));
+        cancelCreate();
+        //getAll();
+      });
+    return workout_p;
   }
   
   function initCreateForm() {
-    swm.newObject = { sportId: '', workoutId: ''}; 
+    swm.newObject = { sport: '', workout: ''}; 
   }
   
   function setEdited(object) {
@@ -487,6 +459,9 @@ angular.module('starter.controllers', ['ionic'])
   swm.isCreating = false;
   swm.getAll = getAll;
   swm.create = create;
+  swm.removeW = removeW;
+  swm.addWorkout = addWorkout;
+  swm.removeWorkout = removeWorkout;
   swm.setEdited = setEdited;
   swm.isCurrent = isCurrent;
   swm.cancelEditing = cancelEditing;
@@ -516,8 +491,8 @@ angular.module('starter.controllers', ['ionic'])
     console.log("Retrieving form from wlc service", JSON.stringify(formData.getForm()));
     $state.go('tab.workoutsexercises');
     
+    
   };
-
   function getAll(){
     WorkoutListModel.all()
       .then(function (result) {
@@ -527,6 +502,7 @@ angular.module('starter.controllers', ['ionic'])
   }
   
   function getWorkouts(){
+    console.log("Get workouts");
     var workoutlist_p = WorkoutListModel.getWorkouts(parseInt($scope.sport.id));
     workoutlist_p.then(function (result){
       var temp_array = [];
@@ -535,6 +511,7 @@ angular.module('starter.controllers', ['ionic'])
         temp_array.push(tempo_workouts[workout]);
       }
       wlc.workouts = temp_array;
+      $scope.workouts = wlc.workouts;
       
        WorkoutListModel.all()
       .then(function(result){
@@ -550,6 +527,7 @@ angular.module('starter.controllers', ['ionic'])
           }
         }
           wlc.workouts2 = fake_array;
+          $scope.workouts2 = wlc.workouts2;
       });
     }),
     (function (error){
@@ -563,7 +541,6 @@ angular.module('starter.controllers', ['ionic'])
       .then(function (result) {
         cancelCreate();
         getAll();
-
         // $state.go("tab.analysis");
       });
   }
@@ -604,6 +581,11 @@ angular.module('starter.controllers', ['ionic'])
     getAll();
   });
   
+  $scope.$on("changedWorkouts", function(event, workouts){
+    console.log("changedWorkouts Listener");
+    getWorkouts();
+    //$scope.$apply();
+  });
   initCreateForm();
   
   if (angular.isDefined($scope.sport)){
@@ -636,8 +618,6 @@ angular.module('starter.controllers', ['ionic'])
     wte.newObject.exercise = exerciseId;
     wte.newObject.workout = workoutId;
     wte.create(wte.newObject);
-    
-    
   };
   
   function getAll(){

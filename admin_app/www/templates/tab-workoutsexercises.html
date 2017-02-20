@@ -3,12 +3,31 @@
             <!--<form class="create-form" role="form" ng-submit="sm.create(newObject)" novalidate>-->
                 <div ng-controller="ExercisesCtrl as ec">
                   <div ng-if="!ec.isCreating && !ec.isEditing">
-                        <ion-checkbox ng-repeat="exercise in ec.check" ng-checked="true" ng-click="submitForm(exercise)">
-                            {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
-
-                        </ion-checkbox>
+                    <ul class = "list">
+                     <div ng-repeat="exercise in ec.check" ng-checked="true" ng-click="removeExercise(exercise)">
+                      <li class="item item-checkbox" id="{{exercise.name}}">
+                       {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
+                        <label class ="checkbox" checked="true">
+                            <input type="checkbox" checked="true">
+                        </label>
+                      </li>
+                     </div>
+                   <li class= "item">
+                <label class="item-input-wrapper">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input class = "item-input-wrapper" type="text" placeholder="search" ng-model='searchText.val'></input>
+                </label>
+                </li>
+                    <div ng-repeat="exercise in ec.check2 | exerciseFilter:searchText" ng-click="addExercise(exercise)">
+                     <li class="item item-checkbox" id="{{exercise.name}}">
+                       {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
+                        <label class ="checkbox">
+                            <input type="checkbox">
+                        </label>
+                      </li>
+                    </div>
+                    </ul>
                   </div>
-                  
                   <!--<button class="button button-block button-dark" ng-click="submitForm(users)" type="submit">Submit</button>-->
 
               <!--</form>  -->

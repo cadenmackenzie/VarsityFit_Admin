@@ -1,16 +1,42 @@
 <ion-view view-title="Analysis">
   <ion-content>
     <div class="bar bar-header item-input-inset">
-      <label class="item-input-wrapper">
-        <i class="icon ion-ios-search placeholder-icon"></i>
-        <input type="search" placeholder="Search">
-      </label>
-      <button class="button button-clear">
-        Cancel
-       </button>
-  </div>
-
-
+    <label class="item-input-wrapper">
+      <i class="icon ion-ios-search placeholder-icon"></i>
+      <input class = "item-input-wrapper" type="search" placeholder="search" ng-model='searchText.val'></input>
+    </label>
+    </div>
+       <ul class = "list" id="surveys">
+         <li class="item">
+           <div class ="row" style="text-align: center;">
+              <div class="col" style="text-align: left;">Date </div>
+               <div class="col"> Name </div>
+              <div class="col"> Starting Body Weight </div> 
+              <div class="col"> Hours Slept </div>
+              <div class="col"> Sleep Quality </div>
+              <div class="col"> Stress Level</div> 
+              <div class="col"> Pre-Workout Soreness </div>
+              <div class="col"> Pre-Workout Fatigue</div>
+          </div> 
+         </li>
+         <div ng-controller="AnalysisCtrl as sv" ng-init=init()>
+              <div ng-repeat="survey in sv.surveys | surveyFilter: searchText |orderBy: date" ng-init="init('date')" ng-model= "survey.data" ng-click="">
+                <li class="item">
+                  <div class = "row" style="text-align: center;">
+                    <div class="col" style="text-align: left;"> {{survey.date}}  </div>
+                    <div class="col"> {{survey.firstName}} {{survey.lastName}}  </div>
+                    
+                    <div class="col"> {{survey.bodyWeightIn}} </div> 
+                    <div class="col"> {{survey.hoursSleep}} </div>
+                    <div class="col"> {{survey.sleepQuality}} </div>
+                    <div class="col"> {{survey.stressLevel}}</div> 
+                    <div class="col"> {{survey.muscleSoreness}} </div>
+                    <div class="col"> {{survey.fatigueLevelPre}}</div>
+                  </div>
+                </li>
+              </div>
+         </div>
+      </ul>
 
   </ion-content>
 </ion-view>

@@ -2,12 +2,12 @@
 
     <div>
         <ion-content class="padding has-header">
-            <!--- CREATING -->
+            <!-- CREATING -->
             <div class="bar bar-header">
                 <span ng-click="cm.cancelCreate()" class="cancel-create">Cancel</span>
             </div>
             
-            <div>
+            <div ng-if="!cm.isCreating && !cm.isEditing">
                   <form class="create-form" role="form"
                         ng-submit="cm.create(cm.newObject)" novalidate>
                       <div class="list has-header padding">

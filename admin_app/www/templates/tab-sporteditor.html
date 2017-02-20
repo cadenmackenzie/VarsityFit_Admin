@@ -13,12 +13,10 @@
                         </li>
                     </div>
                         <li class="item" style="font-size: 30px;  font-weight: 500;">Other Athletes</li>
-                <li class= "item">
                 <label class="item-input-wrapper">
                 <i class="icon ion-ios-search placeholder-icon"></i>
                 <input class = "item-input-wrapper" type="text" placeholder="search" ng-model='searchText.val'></input>
                 </label>
-                </li>
                     <div id="Abbe" ng-model= "user.name" ng-repeat="user in cm.data2 | userFilter:searchText"  ng-click="addUser(user)">
                         <li class="item item-checkbox" id="{{user.firstName}}">
                             {{ user.firstName}}  {{user.lastName}}
@@ -33,8 +31,8 @@
                 <li class="item" style="font-size: 30px;  font-weight: 500; text-align: center;">Current Workouts</li>
                 <div ng-controller="WorkoutCtrl as wlc" ng-if="!wlc.isCreating && !wlc.isEditing">
                     <div ng-repeat="workout in wlc.workouts | orderBy:name" ng-model="workout.name">
-                        <li class ="button button-calm" style="width:80%; float: left;">
-                        <label class="string" ng-click="submitForm(workout)">
+                        <li class ="button button-calm" style="width:80%; float: left;" ng-click="submitForm(workout)">
+                        <label class="string" >
                             {{ workout.name }}
                         </label>
                         </li>
@@ -46,8 +44,8 @@
                     </div>
                 <li class="item" style="font-size: 30px;  font-weight: 500; text-align: center;">Other Workouts</li>
                     <div ng-repeat="workout in wlc.workouts2" ng-model="workout.name">
-                        <li class ="button button-stable" style="width:80%; float:left;">
-                        <label class="string" ng-click="submitForm(workout)">
+                        <li class ="button button-stable" style="width:80%; float:left;" ng-click="submitForm(workout)">
+                        <label class="string" >
                             {{ workout.name }}
                         </label>
                         </li>

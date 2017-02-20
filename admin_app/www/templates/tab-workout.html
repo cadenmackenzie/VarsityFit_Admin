@@ -1,10 +1,12 @@
 <ion-view view-title="Workouts">
+  
+            <ion-nav-buttons side="right" ng-controller="WorkoutCtrl as wlc">
+              <button class="button" ng-click="createWorkout()">
+              Create New Workout
+              </button>
+            </ion-nav-buttons>
+            
         <ion-content class="padding has-header">
-            <!-- CREATING -->
-            <!--<div class="bar bar-header">-->
-            <!--    <span ng-click="cm.cancelCreate()" class="cancel-create">Cancel</span>-->
-            <!--</div>-->
-          
             <div>
               <div ng-controller="WorkoutCtrl as wlc">
                 <div ng-if="!wlc.isCreating && !wlc.isEditing">

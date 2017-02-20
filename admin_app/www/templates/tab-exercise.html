@@ -1,0 +1,22 @@
+<ion-view view-title="Exercises">
+  
+            <ion-nav-buttons side="right" ng-controller="ExerciseEditorCtrl as vm">
+              <button class="button" ng-click="createExercise()">
+              Create New Exercise
+              </button>
+            </ion-nav-buttons>
+            
+        <ion-content class="padding has-header">
+            <div>
+              <div ng-controller="ExerciseEditorCtrl as vm">
+                <div ng-if="!vm.isCreating && !vm.isEditing">
+                    <ion-list>
+                      <ion-item ng-repeat="exercise in vm.data | orderBy: 'name'"  ng-model="exercise.name" ng-click="submitForm(exercise)">
+                        {{ exercise.name }}
+                      </ionitem> 
+                    </ion-list>
+                </div>
+              </div>
+            </div>
+        </ion-content>
+</ion-view>

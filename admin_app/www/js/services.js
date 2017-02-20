@@ -1,5 +1,28 @@
 angular.module('starter.services', [])
 
+    .service('SurveyService', function($http, Backand){
+       var service = this,
+        baseUrl = '/1/objects/',
+        objectName = 'presurvey/';
+        
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;   
+        }
+        
+         function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl(), { 
+                params: {
+                    pageSize: '200',
+                    exclude: "metadata, totalrows"
+                }
+            });
+        };
+    })
+
     .service('APIInterceptor', function ($rootScope, $q) {
         var service = this;
 
@@ -25,7 +48,12 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(), { 
+                params: {
+                    pageSize: '200'
+                }
+                
+            });
         };
 
         service.fetch = function (id) {
@@ -41,11 +69,21 @@ angular.module('starter.services', [])
               method: 'GET',
               url: Backand.getApiUrl() + baseUrl + objectName,
               params: {
-                  pageSize: '20',
+                  pageSize: '200',
                   pageNumber: '1',
                   deep: true,
-                  filter: [{"fieldName": "workout", "operator": "in", "value": id}]
+                  relatedObjects: true,
+                  filter: [{"fieldName": "workout", "operator": "in", "value": id}],
+                  exclude: "metadata, totalrows"
               }
+            });
+        };
+        
+        service.delete = function (id) {
+            console.log("url", getUrl());
+            return $http({
+                method: 'DELETE',
+                url : Backand.getApiUrl() + '/1/objects/' + "workouts_exercises" + '/' + id
             });
         };
     })
@@ -136,7 +174,7 @@ angular.module('starter.services', [])
               method: 'GET',
               url: Backand.getApiUrl() + baseUrl + 'users_sports/',
               params: {
-                  pageSize: '20',
+                  pageSize: '200',
                   pageNumber: '1',
                   filter: [{"fieldName": "sport", "operator": "in", "value": id}],
                   deep: true,
@@ -300,7 +338,11 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(),{
+                params:{
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -382,4 +424,3 @@ angular.module('starter.services', [])
 
         
     });
-    

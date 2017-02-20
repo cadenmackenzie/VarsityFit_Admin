@@ -1,0 +1,211 @@
+[
+  {
+    "name": "presurvey",
+    "fields": {
+      "bodyWeightIn": {
+        "type": "float"
+      },
+      "hoursSleep": {
+        "type": "float"
+      },
+      "sleepQuality": {
+        "type": "float"
+      },
+      "stressLevel": {
+        "type": "float"
+      },
+      "muscleSoreness": {
+        "type": "float"
+      },
+      "fatigueLevelPre": {
+        "type": "float"
+      },
+      "user": {
+        "object": "users"
+      },
+      "date": {
+        "type": "datetime"
+      }
+    }
+  },
+  {
+    "name": "postsurvey",
+    "fields": {
+      "bodyWeightOut": {
+        "type": "float"
+      },
+      "practiceDifficulty": {
+        "type": "float"
+      },
+      "fatigueLevelPost": {
+        "type": "float"
+      },
+      "user": {
+        "object": "users"
+      },
+      "date": {
+        "type": "datetime"
+      }
+    }
+  },
+  {
+    "name": "users",
+    "fields": {
+      "users_sports": {
+        "collection": "users_sports",
+        "via": "user"
+      },
+      "surveys1": {
+        "collection": "presurvey",
+        "via": "user"
+      },
+      "postsurveys": {
+        "collection": "postsurvey",
+        "via": "user"
+      },
+      "completed": {
+        "collection": "completed",
+        "via": "user"
+      },
+      "email": {
+        "type": "string"
+      },
+      "firstName": {
+        "type": "string"
+      },
+      "lastName": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "name": "sports",
+    "fields": {
+      "users_sports": {
+        "collection": "users_sports",
+        "via": "sport"
+      },
+      "workouts": {
+        "collection": "sports_workouts",
+        "via": "sport"
+      },
+      "sets": {
+        "collection": "sets",
+        "via": "sport"
+      },
+      "name": {
+        "type": "string"
+      }
+    }
+  },
+  {
+    "name": "users_sports",
+    "fields": {
+      "user": {
+        "object": "users"
+      },
+      "sport": {
+        "object": "sports"
+      }
+    }
+  },
+  {
+    "name": "workouts",
+    "fields": {
+      "sports": {
+        "collection": "sports_workouts",
+        "via": "workout"
+      },
+      "exercises": {
+        "collection": "workouts_exercises",
+        "via": "workout"
+      },
+      "completed": {
+        "collection": "completed",
+        "via": "workout"
+      },
+      "name": {
+        "type": "string"
+      },
+      "set": {
+        "object": "sets"
+      }
+    }
+  },
+  {
+    "name": "sports_workouts",
+    "fields": {
+      "sport": {
+        "object": "sports"
+      },
+      "workout": {
+        "object": "workouts"
+      }
+    }
+  },
+  {
+    "name": "exercises",
+    "fields": {
+      "workouts": {
+        "collection": "workouts_exercises",
+        "via": "exercise"
+      },
+      "completed": {
+        "collection": "completed",
+        "via": "exercise"
+      },
+      "name": {
+        "type": "string"
+      },
+      "sets": {
+        "type": "float"
+      },
+      "reps": {
+        "type": "float"
+      }
+    }
+  },
+  {
+    "name": "workouts_exercises",
+    "fields": {
+      "workout": {
+        "object": "workouts"
+      },
+      "exercise": {
+        "object": "exercises"
+      }
+    }
+  },
+  {
+    "name": "completed",
+    "fields": {
+      "workout": {
+        "object": "workouts"
+      },
+      "user": {
+        "object": "users"
+      },
+      "exercise": {
+        "object": "exercises"
+      },
+      "weight": {
+        "type": "float"
+      }
+    }
+  },
+  {
+    "name": "sets",
+    "fields": {
+      "workouts": {
+        "collection": "workouts",
+        "via": "set"
+      },
+      "name": {
+        "type": "string"
+      },
+      "sport": {
+        "object": "sports"
+      }
+    }
+  }
+]

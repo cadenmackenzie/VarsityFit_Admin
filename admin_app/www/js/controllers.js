@@ -44,7 +44,6 @@ angular.module('starter.controllers', ['ionic'])
 
 .filter('surveyFilter', function(){
   return function(surveys, searchText){
-    console.log("typeof", JSON.stringify(typeof searchText));
     searchText = searchText || '';
     if (searchText != ''){
       //searchText = searchText.toString().toLowerCase();
@@ -1034,6 +1033,7 @@ angular.module('starter.controllers', ['ionic'])
     console.log(JSON.stringify($scope.date), JSON.stringify(sv.date));
     SurveyService.all()
     .then(function(result){
+      console.log(JSON.stringify(result));
       var counter = 0;
       var temp_surveys = [];
       for(var survey2 in result.data.data){

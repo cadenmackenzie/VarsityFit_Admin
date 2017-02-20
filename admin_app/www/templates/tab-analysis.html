@@ -11,12 +11,15 @@
            <div class ="row" style="text-align: center;">
               <div class="col" style="text-align: left;">Date </div>
                <div class="col"> Name </div>
-              <div class="col"> Starting Body Weight </div> 
+              <div class="col"> Weight In </div> 
               <div class="col"> Hours Slept </div>
               <div class="col"> Sleep Quality </div>
               <div class="col"> Stress Level</div> 
-              <div class="col"> Pre-Workout Soreness </div>
-              <div class="col"> Pre-Workout Fatigue</div>
+              <div class="col"> Sorness In </div>
+              <div class="col"> Fatigue In</div>
+              <div class="col"> Practice Difficulty</div>
+              <div class="col"> Fatigue Out</div>
+              <div class="col"> Weight Out</div>
           </div> 
          </li>
          <div ng-controller="AnalysisCtrl as sv" ng-init=init()>
@@ -32,6 +35,9 @@
                     <div class="col"> {{survey.stressLevel}}</div> 
                     <div class="col"> {{survey.muscleSoreness}} </div>
                     <div class="col"> {{survey.fatigueLevelPre}}</div>
+                    <div class="col"> {{survey.practiceDifficulty}}</div>
+                    <div class="col"> {{survey.fatigueLevelPost}}</div>
+                    <div class="col"> {{survey.bodyWeightOut}}</div>
                   </div>
                 </li>
               </div>

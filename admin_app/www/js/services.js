@@ -3,7 +3,7 @@ angular.module('starter.services', [])
     .service('SurveyService', function($http, Backand){
        var service = this,
         baseUrl = '/1/objects/',
-        objectName = 'presurvey/';
+        objectName = 'completed/';
         
         function getUrl() {
             return Backand.getApiUrl() + baseUrl + objectName;   

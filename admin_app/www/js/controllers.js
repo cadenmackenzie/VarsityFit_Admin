@@ -1,15 +1,15 @@
-angular.module('starter.controllers', ['ionic'])
+angular.module('starter.controllers', ['ionic', 'chart.js'])
 
 .filter('userFilter', function(){
   return function(user, searchText){
     var filteredUsers = [];
     searchText = searchText || '' ;
+    console.log("st", JSON.stringify(searchText));
     
     if (searchText.val == ''){
       return user;
     }
     searchText.val = searchText.val.toLowerCase();
-    console.log("filt", JSON.stringify(searchText)); 
     for (var obj in user){
       var a_user = user[obj];
       if ((a_user.firstName.toLowerCase().includes(searchText.val)) || (a_user.lastName.toLowerCase().includes(searchText.val))){
@@ -25,13 +25,11 @@ angular.module('starter.controllers', ['ionic'])
     
     var filteredExercises = [];
     searchText = searchText || '' ;
-   // console.log("ex_text", JSON.stringify(searchText));
     
     if (searchText.val == ''){
       return exercise;
     }
     searchText.val = searchText.val.toLowerCase();
-    console.log("filt", JSON.stringify(searchText)); 
     for (var obj in exercise){
       var an_exercise = exercise[obj];
       if ((an_exercise.name.toLowerCase().includes(searchText.val))){
@@ -42,15 +40,34 @@ angular.module('starter.controllers', ['ionic'])
   };
 })
 
+.filter('workoutFilter', function(){
+  return function(workout, searchText){
+    
+    var filteredWorkouts = [];
+    searchText = searchText || '' ;
+    console.log(JSON.stringify(searchText), searchText.val);
+    
+    if (searchText.val == ''){
+      return workout;
+    }
+    searchText.val = searchText.val.toLowerCase();
+    for (var obj in workout){
+      var a_workout = workout[obj];
+      if ((a_workout.name.toLowerCase().includes(searchText.val))){
+        filteredWorkouts.push(a_workout);
+      }
+    }
+    return filteredWorkouts;
+  };
+})
+
 .filter('surveyFilter', function(){
   return function(surveys, searchText){
     searchText = searchText || '';
     if (searchText != ''){
-      //searchText = searchText.toString().toLowerCase();
-     // console.log("surveys", JSON.stringify(searchText));
+      searchText.val = searchText.val.toLowerCase();
       var filteredSurveys = [];
       surveys.forEach(function(a_survey){
-     //   console.log(JSON.stringify(a_survey), typeof a_survey.firstName, JSON.stringify(searchText), searchText.val);
         if(a_survey.firstName.toLowerCase().includes(searchText.val) || a_survey.lastName.toLowerCase().includes(searchText.val) || a_survey.date.includes(searchText.val)){
           filteredSurveys.push(a_survey);
         }
@@ -530,6 +547,12 @@ angular.module('starter.controllers', ['ionic'])
 
   //$scope.workouts = {};
   
+  if(!angular.isDefined($scope.searchText)){
+    console.log("init");
+    $scope.searchText = {};
+    $scope.searchText.val='';  
+  } 
+  
   $scope.createWorkout = function(){
     $state.go('tab.workouteditor');
   };
@@ -646,9 +669,9 @@ angular.module('starter.controllers', ['ionic'])
 })
 
 //contoller to populate workouts_exercises
-.controller('WorkoutExerciseCtrl', function($rootScope, $scope, WorkoutExerciseModel, $state, Backand, formData) {
+.controller('WorkoutExerciseCtrl', function($rootScope, $scope, WorkoutExerciseModel, ExerciseListModel, $state, Backand, formData) {
   var wte = this;
-
+  
   $scope.exercise = {};
   //$scope.users = {};
   var exerciseId;
@@ -693,6 +716,38 @@ angular.module('starter.controllers', ['ionic'])
     });
   };
   
+   function getEx(){
+    console.log("getEx");
+    var temp_ex = [];
+    //console.log(JSON.stringify($scope.workouts));
+    var exlist_p = WorkoutExerciseModel.getEx(parseInt($scope.workouts.id));
+    exlist_p.then(function (result){
+      console.log(JSON.stringify(result.data.relatedObjects.exercises));
+      var exercises = result.data.relatedObjects.exercises;
+      for (var index in exercises)
+        temp_ex.push(exercises[index]);
+        
+       ExerciseListModel.all()
+      .then(function(result){
+        var all_ex = result.data.data;
+        var not_ex = []
+        var curr_ex;
+        
+        for (var baduser in all_ex){
+          curr_ex = all_ex[baduser];
+         // console.log("curr_ex", JSON.stringify(curr_ex));
+          if (!(not_ex.includes(angular.toJson(curr_ex))) && 
+              !angular.toJson(temp_ex).includes(angular.toJson(curr_ex))){
+            not_ex.push(curr_ex);
+          }
+        }
+        wte.check2 = not_ex;
+      });
+
+    });
+    
+    wte.check = temp_ex;
+  }
   function getAll(){
     WorkoutExerciseModel.all()
       .then(function (result) {
@@ -705,7 +760,7 @@ angular.module('starter.controllers', ['ionic'])
     return WorkoutExerciseModel.create(object)
       .then(function (result) {
         cancelCreate();
-        getAll();
+        getEx();
         
       });
   }
@@ -714,7 +769,7 @@ angular.module('starter.controllers', ['ionic'])
     return WorkoutExerciseModel.delete(object)
       .then(function (result) {
         cancelCreate();
-        getAll();
+        getEx();
       });
   }
   
@@ -757,7 +812,8 @@ angular.module('starter.controllers', ['ionic'])
   });
   
   initCreateForm();
-  getAll();
+  //getAll();
+  getEx();
 })
 
 //contoller create workouts
@@ -837,11 +893,18 @@ angular.module('starter.controllers', ['ionic'])
 //contoller create exercises  
 .controller('ExerciseEditorCtrl', function($rootScope, $scope, ExerciseModel, $state, Backand) {
   var vm = this;
+  console.log("rs",JSON.stringify( $rootScope.ex), typeof $rootScope.ex);
+  if ($rootScope.ex != null){
+    $scope.name = $rootScope.ex.name;
+    $scope.reps = $rootScope.ex.reps;
+    $scope.sets = $rootScope.ex.sets;
+    $scope.ex = $rootScope.ex;
+    vm.ex = $rootScope.ex;
+    vm.ex.name = $rootScope.ex.name;
+    vm.ex.reps = $rootScope.ex.reps;
+    vm.ex.sets = $rootScope.ex.sets;
+  }
   
-  
-  $scope.createExercise = function(){
-    $state.go('tab.exerciseeditor');
-  };
   
   function getAll(){
     console.log("ExerciseEdit.getAll");
@@ -850,6 +913,24 @@ angular.module('starter.controllers', ['ionic'])
             vm.data = result.data.data;
       });
   }
+  
+  function update(object){
+    ExerciseModel.fetch(object.id).then(function (result){
+      console.log("stuff", JSON.stringify(result));
+    });
+    console.log(JSON.stringify(vm.ex));
+    console.log("update ex", JSON.stringify(object));
+    ExerciseModel.update(object)
+    .then(function (result){
+      console.log("then");
+    },
+    function (error){
+      console.log('error', JSON.stringify(error));
+    });
+    cancelCreate();
+    getAll();
+    $state.go("tab.exercise");
+  }
 
   function create(object){
     console.log("ExerciseEdit.createObj");
@@ -857,7 +938,7 @@ angular.module('starter.controllers', ['ionic'])
       .then(function (result) {
         cancelCreate();
         getAll();
-        $state.go("tab.analysis");
+        $state.go("tab.exercise");
       });
   }
   
@@ -895,6 +976,7 @@ angular.module('starter.controllers', ['ionic'])
   vm.isCurrent = isCurrent;
   vm.cancelEditing = cancelEditing;
   vm.cancelCreate = cancelCreate;
+  vm.update = update;
   $rootScope.$on("authorized", function() {
     getAll();
   });
@@ -907,7 +989,16 @@ angular.module('starter.controllers', ['ionic'])
 //controller to access exercises
 .controller('ExercisesCtrl', function($ionicHistory, $rootScope, $scope, ExerciseListModel, WorkoutExerciseModel, $state, Backand) {
   var ec = this;
-
+  
+  $scope.createExercise = function(){
+    $state.go('tab.exerciseeditor');
+  };
+  
+  $scope.submitForm =function(exercise){
+    console.log("ex_submit", JSON.stringify(exercise));
+    $rootScope.ex = exercise;
+    $state.go('tab.exerciseupdate');
+  };
   if(!angular.isDefined($scope.searchText)){
     console.log("init");
     $scope.searchText = {};
@@ -919,41 +1010,9 @@ angular.module('starter.controllers', ['ionic'])
       .then(function (result) {
             ec.data = result.data.data;
       });
+  }
   
-  }
   //console.log("backview", JSON.stringify($ionicHistory.backView()));
-  function getEx(){
-    console.log("getEx");
-    var temp_ex = [];
-    //console.log(JSON.stringify($scope.workouts));
-    var exlist_p = WorkoutExerciseModel.getEx(parseInt($scope.workouts.id));
-    exlist_p.then(function (result){
-      //console.log(JSON.stringify(result.data.relatedObjects.exercises));
-      var exercises = result.data.relatedObjects.exercises;
-      for (var index in exercises)
-        temp_ex.push(exercises[index]);
-        
-       ExerciseListModel.all()
-      .then(function(result){
-        var all_ex = result.data.data;
-        var not_ex = []
-        var curr_ex;
-        
-        for (var baduser in all_ex){
-          curr_ex = all_ex[baduser];
-          console.log("curr_ex", JSON.stringify(curr_ex));
-          if (!(not_ex.includes(angular.toJson(curr_ex))) && 
-              !angular.toJson(temp_ex).includes(angular.toJson(curr_ex))){
-            not_ex.push(curr_ex);
-          }
-        }
-        ec.check2 = not_ex;
-      });
-
-    });
-    
-    ec.check = temp_ex;
-  }
   
   function create(object){
     ExerciseListModel.create(object)
@@ -1009,7 +1068,7 @@ angular.module('starter.controllers', ['ionic'])
   });
   initCreateForm();
   getAll();
-  getEx();
+  //getEx();
 
 
 })
@@ -1049,6 +1108,12 @@ angular.module('starter.controllers', ['ionic'])
     var link = document.getElementById("hiddenbutton");
     link.href = encodedUri;
     link.download = "varsityfit.csv";
+  }
+  
+  $scope.charts = function(survey){
+    console.log(JSON.stringify(survey));
+    $rootScope.ag = survey;
+    $state.go('tab.analysisgraphs');
   }
   
   function getAll() {
@@ -1091,7 +1156,53 @@ angular.module('starter.controllers', ['ionic'])
   getAll();
 })
 
-
+.controller("GraphCtrl", function ($scope, $rootScope, Backand, SurveyService) {
+  $scope.firstName = $rootScope.ag.firstName;
+  console.log("fn", $scope.firstName);
+  var gc = this;
+  console.log("ag", JSON.stringify($rootScope.ag));
+  $scope.labels = [];
+  $scope.bodyweightin = [];
+  gc.stress = [];
+  $scope.series = ['Body Weight In'];
+  
+  SurveyService.userSurveys($rootScope.ag.user).then(function(result){
+    console.log(JSON.stringify(result.data.totalRows));
+    
+    var temp_bw = [];
+    var fatigueIn = [];
+    var stress = [];
+  
+    result.data.data.forEach(function(survey){
+      $scope.labels.push(survey.date.slice(0, 10));
+      temp_bw.push(survey.bodyWeightIn);
+      
+      stress.push(survey.stressLevel);
+      fatigueIn.push(survey.fatigueLevelPre);
+    });
+    
+    $scope.bodyweightin.push(temp_bw);
+         
+    console.log("lookhere",Math.min.apply(null, $scope.bodyweightin[0])-10, $scope.bodyweightin[0]);
+    gc.stress.push(stress);
+    gc.stress.push(fatigueIn);
+    gc.stressSeries = ['Stress','Fatigue In'];
+    
+    console.log("3barchart", JSON.stringify(gc.stress), gc.fatigueIn);
+    console.log("labels", JSON.stringify($scope.labels));
+    console.log("bwi", JSON.stringify($scope.bodyweightin));
+    $scope.options = {
+      title: {display:true, text:"Weight"},
+      scales: { yAxes: [{ ticks: { min:Math.min.apply(null,$scope.bodyweightin[0])-5, 
+      max:Math.max.apply(null,$scope.bodyweightin[0])+5} }] }
+    };
+    gc.stressOptions = {
+      title: {display:true, text: "Stress and Fatigue"},
+      scales: { yAxes: [{ ticks: { min:0, max:5, stepSize:1} }] }
+    };
+  });
+ 
+})
 
 .controller('AccountCtrl', function($scope, Backand, $state) {
 
@@ -1129,3 +1240,4 @@ angular.module('starter.controllers', ['ionic'])
   };
 
 });
+

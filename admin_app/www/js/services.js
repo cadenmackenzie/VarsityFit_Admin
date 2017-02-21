@@ -3,7 +3,7 @@ angular.module('starter.services', [])
     .service('SurveyService', function($http, Backand){
        var service = this,
         baseUrl = '/1/objects/',
-        objectName = 'completed/';
+        objectName = 'presurvey/';
         
         function getUrl() {
             return Backand.getApiUrl() + baseUrl + objectName;   
@@ -18,6 +18,16 @@ angular.module('starter.services', [])
                 params: {
                     pageSize: '200',
                     exclude: "metadata, totalrows"
+                }
+            });
+        };
+        
+        service.userSurveys = function(id){
+            return $http.get(getUrl(),{
+                params: {
+                    pageSize: '200',
+                    exclude: "metadata",
+                    filter: [{"fieldName": "user", "operator": "in", "value": id}],
                 }
             });
         };
@@ -102,7 +112,12 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(), { 
+                params: {
+                    pageSize: '200',
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -111,6 +126,19 @@ angular.module('starter.services', [])
 
         service.create = function (object) {
             return $http.post(getUrl(), object);
+        };
+        
+        service.update = function(objecto){
+            console.log("serviceo", JSON.stringify(objecto));
+            return $http.put('https://api.backand.com:443/1/objects/exercises/' + JSON.stringify(objecto.id), {
+                data:{
+                    	"id": objecto.id,
+                    	"workouts": objecto.workouts,
+                    	"name": objecto.name,
+                    	"sets": objecto.sets,
+                    	"reps": objecto.reps
+                    }
+            });
         };
     })
     
@@ -340,7 +368,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(),{
                 params:{
-                    exclude: "metadata, totalrows"
+                    pageSize: '200',
                 }
             });
         };

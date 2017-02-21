@@ -2,9 +2,9 @@
         <ion-content>
             <!--<form class="create-form" role="form" ng-submit="sm.create(newObject)" novalidate>-->
                 <div ng-controller="ExercisesCtrl as ec">
-                  <div ng-if="!ec.isCreating && !ec.isEditing">
+                  <div ng-if="!wte.isCreating && !wte.isEditing">
                     <ul class = "list">
-                     <div ng-repeat="exercise in ec.check" ng-checked="true" ng-click="removeExercise(exercise)">
+                     <div ng-repeat="exercise in wte.check" ng-checked="true" ng-click="removeExercise(exercise)">
                       <li class="item item-checkbox" id="{{exercise.name}}">
                        {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
                         <label class ="checkbox" checked="true">
@@ -18,7 +18,7 @@
                 <input class = "item-input-wrapper" type="text" placeholder="search" ng-model='searchText.val'></input>
                 </label>
                 </li>
-                    <div ng-repeat="exercise in ec.check2 | exerciseFilter:searchText" ng-click="addExercise(exercise)">
+                    <div ng-repeat="exercise in wte.check2 | exerciseFilter:searchText" ng-click="addExercise(exercise)">
                      <li class="item item-checkbox" id="{{exercise.name}}">
                        {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
                         <label class ="checkbox">

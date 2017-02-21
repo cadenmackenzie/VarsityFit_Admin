@@ -10,7 +10,8 @@
     <div class="bar bar-header item-input-inset">
     <label class="item-input-wrapper">
       <i class="icon ion-ios-search placeholder-icon"></i>
-      <input class = "item-input-wrapper" type="search" placeholder="search" ng-model='searchText.val'></input>
+      <input class = "item-input-wrapper" type="search" placeholder="search" 
+        ng-model='searchText.val'></input>
     </label>
     </div>
        <ul class = "list" id="surveys">
@@ -30,7 +31,8 @@
           </div> 
          </li>
          <div ng-controller="AnalysisCtrl as sv" ng-init=init()>
-              <div ng-repeat="survey in sv.surveys | surveyFilter: searchText |orderBy: date" ng-init="init('date')" ng-model= "survey.data" ng-click="">
+              <div ng-repeat="survey in sv.surveys | surveyFilter: searchText |orderBy: date"
+                 ng-model= "survey.data" ng-click="charts({{survey}})">
                 <li class="item">
                   <div class = "row" style="text-align: center;">
                     <div class="col" style="text-align: left;"> {{survey.date}}  </div>

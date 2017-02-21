@@ -103,7 +103,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       views: {
         'tab-exercise': {
           templateUrl: 'templates/tab-exercise.html',
-          controller: 'ExerciseEditorCtrl as vm'
+          controller: 'ExercisesCtrl as ec'
         }
       }
     })   
@@ -117,6 +117,16 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
         }
       }
     })
+ 
+    .state('tab.exerciseupdate', {
+      url: '/exerciseupdate',
+      views: {
+        'tab-exercise': {
+          templateUrl: 'templates/tab-exerciseupdate.html',
+          controller: 'ExerciseEditorCtrl as vm'
+        }
+      }
+    })   
     
     .state('tab.sport', {
       url: '/sport',
@@ -143,6 +153,16 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
       'tab-account': {
         templateUrl: 'templates/tab-account.html',
         controller: 'AccountCtrl as vm'
+      }
+    }
+  })  
+  
+    .state('tab.analysisgraphs', {
+    url: '/analysisgraphs',
+    views: {
+      'tab-analysis': {
+        templateUrl: 'templates/tab-analysisgraphs.html',
+        controller: 'GraphCtrl as gc'
       }
     }
   })  

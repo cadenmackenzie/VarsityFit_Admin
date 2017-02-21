@@ -25,7 +25,7 @@ angular.module('starter.controllers', ['ionic'])
     
     var filteredExercises = [];
     searchText = searchText || '' ;
-    console.log("ex_text", JSON.stringify(searchText));
+   // console.log("ex_text", JSON.stringify(searchText));
     
     if (searchText.val == ''){
       return exercise;
@@ -47,10 +47,10 @@ angular.module('starter.controllers', ['ionic'])
     searchText = searchText || '';
     if (searchText != ''){
       //searchText = searchText.toString().toLowerCase();
-      console.log("surveys", JSON.stringify(searchText));
+     // console.log("surveys", JSON.stringify(searchText));
       var filteredSurveys = [];
       surveys.forEach(function(a_survey){
-        console.log(JSON.stringify(a_survey), typeof a_survey.firstName, JSON.stringify(searchText), searchText.val);
+     //   console.log(JSON.stringify(a_survey), typeof a_survey.firstName, JSON.stringify(searchText), searchText.val);
         if(a_survey.firstName.toLowerCase().includes(searchText.val) || a_survey.lastName.toLowerCase().includes(searchText.val) || a_survey.date.includes(searchText.val)){
           filteredSurveys.push(a_survey);
         }
@@ -1028,12 +1028,34 @@ angular.module('starter.controllers', ['ionic'])
     console.log("mic_check");
     sv.dates = [];
   }
+  
+  $scope.export= function(){
+    var csv_array = [];
+    var csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "user,bodyWeightOut,practiceDifficulty,fatigueLevelPost,Date,bodyWeightIn,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,sleepQuality,lastName,firstName"+ "\n";
+    $rootScope.surveys.forEach(function(infoArray, index){
+    for (var item in infoArray){
+     if (item != "id" && item != "__metadata" && item != "$$hashKey"){
+        csv_array.push(infoArray[item]);
+      }  
+    }
 
+    var dataString = csv_array.join(",");
+    csvContent += dataString + "\n";
+    console.log("csv", csvContent, JSON.stringify(infoArray));
+
+});   
+    var encodedUri = encodeURI(csvContent);
+    var link = document.getElementById("hiddenbutton");
+    link.href = encodedUri;
+    link.download = "varsityfit.csv";
+  }
+  
   function getAll() {
     console.log(JSON.stringify($scope.date), JSON.stringify(sv.date));
     SurveyService.all()
     .then(function(result){
-      console.log(JSON.stringify(result));
+     // console.log(JSON.stringify(result));
       var counter = 0;
       var temp_surveys = [];
       for(var survey2 in result.data.data){
@@ -1060,6 +1082,7 @@ angular.module('starter.controllers', ['ionic'])
         );
     });
     sv.surveys = temp_surveys;
+    $rootScope.surveys = sv.surveys;
     });
     
     

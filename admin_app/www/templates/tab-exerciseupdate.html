@@ -1,4 +1,4 @@
-<ion-view view-title="Exercise Update">
+<ion-view view-title="Exercise Update for {{name}}">
 
     <div>
         <ion-content class="padding has-header">
@@ -21,7 +21,7 @@
                         <label class="item item-input item-select">
                             <span class="input-label">Repetitions</span>
                             <select  ng-model ="vm.ex.reps">
-                                <option value='' disabled selected>{{vm.ex.reps}}</option>
+                                <option value='{{reps}}' disabled selected>{{reps}}</option>
                                 <option value=1>1</option>
                                 <option value=2>2</option>
                                 <option value=3>3</option>
@@ -38,7 +38,7 @@
                         <label class="item item-input item-select">
                             <span class="input-label">Sets</span>
                             <select ng-model ="vm.ex.sets">
-                                <option value="" disabled selected>{{sets}}</option>
+                                <option value="{{sets}}" disabled selected>{{sets}}</option>
                                 <option value=1>1</option>
                                 <option value=2>2</option>
                                 <option value=3>3</option>

@@ -1,7 +1,18 @@
 <ion-view view-title="{{workouts.name}}">
+    <ion-nav-buttons side="right">
+        <a class="button button-balanced" ng-click="edit(workouts)">
+            Change Name
+        </a>
+        <a class="button button-assertive" ng-controller="WorkoutCtrl as wlc"
+            ng-click="wlc.delete(workouts)">
+            <label class="string">
+                Remove
+            </label>
+        </a>
+    </ion-nav-buttons>
         <ion-content>
             <!--<form class="create-form" role="form" ng-submit="sm.create(newObject)" novalidate>-->
-                <div ng-controller="ExercisesCtrl as ec">
+                <div ng-controller="WorkoutExerciseCtrl as wte">
                   <div ng-if="!wte.isCreating && !wte.isEditing">
                     <ul class = "list">
                      <div ng-repeat="exercise in wte.check" ng-checked="true" ng-click="removeExercise(exercise)">

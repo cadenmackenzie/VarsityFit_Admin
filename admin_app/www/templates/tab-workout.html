@@ -7,18 +7,15 @@
             </ion-nav-buttons>
             
         <ion-content class="padding has-header">
-            <div>
-              <div ng-controller="WorkoutCtrl as wlc">
+            <div ng-controller="WorkoutCtrl as wlc">
                 <div ng-if="!wlc.isCreating && !wlc.isEditing">
-                  <!--<form ng-submit="submitForm(sport)">-->
                     <ion-list>
-                      <ion-item ng-repeat="workouts in wlc.data | orderBy: 'name'"  ng-model="workouts.name" ng-click="submitForm(workouts)">
+                      <ion-item ng-repeat="workouts in wlc.data | orderBy: 'name'"  
+                      ng-model="wlc.data" ng-click="submitForm(workouts)">
                         {{ workouts.name }}
                       </ionitem> 
                     </ion-list>
-                  <!--</form>  -->
                 </div>
-              </div>
             </div>
         </ion-content>
 </ion-view>

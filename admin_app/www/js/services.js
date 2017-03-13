@@ -3,7 +3,7 @@ angular.module('starter.services', [])
     .service('SurveyService', function($http, Backand){
        var service = this,
         baseUrl = '/1/objects/',
-        objectName = 'presurvey/';
+        objectName = 'completed/';
         
         function getUrl() {
             return Backand.getApiUrl() + baseUrl + objectName;   
@@ -26,8 +26,28 @@ angular.module('starter.services', [])
             return $http.get(getUrl(),{
                 params: {
                     pageSize: '200',
-                    exclude: "metadata",
+                    exclude: 'metadata',
                     filter: [{"fieldName": "user", "operator": "in", "value": id}],
+                }
+            });
+        };
+        
+        service.sportSurveys = function(id){
+            return $http.get(getUrl(),{
+                params: {
+                    pageSize:'200',
+                    exclude:'metadata',
+                    filter:[{"fieldName":"sport", "operator": "in", "value": id}],
+                }
+            });
+        };
+        
+        service.exerciseSurveys = function(id){
+            return $http.get(getUrl(),{
+                params: {
+                    pageSize: '2000',
+                    exclude: 'metadata',
+                    filter:[{"fieldName":"exercise", "operator": "in", "value": id}]
                 }
             });
         };
@@ -96,6 +116,17 @@ angular.module('starter.services', [])
                 url : Backand.getApiUrl() + '/1/objects/' + "workouts_exercises" + '/' + id
             });
         };
+        
+        service.update = function(objecto){
+            console.log("serviceo", JSON.stringify(objecto));
+             return $http({
+          method: 'PUT',
+          url : "https://api.backand.com/1/objects/workouts/" + objecto.id,
+          data: {
+            	"name": objecto.name,
+                },
+            });
+        };
     })
 
     .service('ExerciseModel', function ($http, Backand) {
@@ -130,15 +161,16 @@ angular.module('starter.services', [])
         
         service.update = function(objecto){
             console.log("serviceo", JSON.stringify(objecto));
-            return $http.put('https://api.backand.com:443/1/objects/exercises/' + JSON.stringify(objecto.id), {
-                data:{
-                    	"id": objecto.id,
-                    	"workouts": objecto.workouts,
-                    	"name": objecto.name,
-                    	"sets": objecto.sets,
-                    	"reps": objecto.reps
-                    }
-            });
+             return $http({
+          method: 'PUT',
+          url : getUrl() + objecto.id,
+          data: {
+                "id": objecto.id,
+            	"name": objecto.name,
+            	"sets": objecto.sets,
+            	"reps": objecto.reps
+          },
+      });
         };
     })
     
@@ -166,6 +198,7 @@ angular.module('starter.services', [])
         service.create = function (object) {
             return $http.post(getUrl(), object);
         };
+        
     })
     
     .service('UserModel', function ($http, Backand) {
@@ -256,6 +289,15 @@ angular.module('starter.services', [])
               }
             });
         };
+        
+         service.delete = function (id) {
+            console.log("url", getUrl() + id);
+            return $http({
+                method: 'DELETE',
+                url : getUrl() + id
+            });
+        };
+        
     }) 
     
     .service('SportModel', function ($http, Backand) {
@@ -316,6 +358,17 @@ angular.module('starter.services', [])
           url : Backand.getApiUrl() + '/1/objects/' + "users_sports" + '/' + id
       })
         };
+        
+         service.update = function(objecto){
+            console.log("serviceo", JSON.stringify(objecto));
+             return $http({
+          method: 'PUT',
+          url : "https://api.backand.com/1/objects/sports/" + objecto.id,
+          data: {
+            	"name": objecto.name,
+                },
+            });
+        };
     })
 
     .service('SportWorkoutModel', function ($http, Backand) {
@@ -369,6 +422,7 @@ angular.module('starter.services', [])
             return $http.get(getUrl(),{
                 params:{
                     pageSize: '200',
+                    exclude: "metadata, totalrows"
                 }
             });
         };

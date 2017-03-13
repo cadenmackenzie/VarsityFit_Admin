@@ -80,6 +80,7 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
 
     .state('tab.workout', {
       url: '/workout',
+      cache: false,
       views: {
         'tab-workout': {
           templateUrl: 'templates/tab-workout.html',
@@ -97,9 +98,20 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
         }
       }
     })    
+    
+    .state('tab.workoutsupdate', {
+      url: '/workoutsupdate',
+      views: {
+        'tab-workout': {
+          templateUrl: 'templates/tab-workoutsupdate.html',
+          controller: 'WorkoutExerciseCtrl as wte'
+        }
+      }
+    })    
 
     .state('tab.exercise', {
       url: '/exercise',
+      cache: false,
       views: {
         'tab-exercise': {
           templateUrl: 'templates/tab-exercise.html',
@@ -146,6 +158,16 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
         }
       }
     }) 
+    
+    .state('tab.sportupdate', {
+      url: '/sportupdate',
+      views: {
+        'tab-sport': {
+          templateUrl: 'templates/tab-sportupdate.html',
+          controller: 'SportEditorCtrl as usm'
+        }
+      }
+    })
 
   .state('tab.account', {
     url: '/account',

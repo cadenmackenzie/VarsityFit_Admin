@@ -8,13 +8,13 @@
             
         <ion-content ng-controller="ExercisesCtrl as ec" class="padding has-header">
             <div>
-                <div ng-if="!ec.isCreating && !ec.isEditing">
-                    <ion-list>
-                      <ion-item ng-repeat="exercise in ec.data | orderBy: 'name'"  
-                      ng-model="ec.data" ng-click="submitForm(exercise)">
-                        {{ exercise.name }} Sets: {{exercise.sets}} Reps: {{exercise.reps}}
-                      </ionitem> 
-                    </ion-list>
+              <div ng-if="!ec.isCreating && !ec.isEditing">
+                <ion-list>
+                  <ion-item ng-repeat="exercise in ec.data | orderBy: 'name'"  
+                    ng-model="ec.data" ng-click="submitForm(exercise)">
+                    {{ exercise.name }} Sets: {{exercise.sets}} Reps: {{exercise.reps}}
+                  </ionitem> 
+                </ion-list>
               </div>
             </div>
         </ion-content>

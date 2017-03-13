@@ -4,7 +4,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   return function(user, searchText){
     var filteredUsers = [];
     searchText = searchText || '' ;
-    console.log("st", JSON.stringify(searchText));
+    //console.log("st", JSON.stringify(searchText));
     
     if (searchText.val == ''){
       return user;
@@ -45,7 +45,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     
     var filteredWorkouts = [];
     searchText = searchText || '' ;
-    console.log(JSON.stringify(searchText), searchText.val);
+    //console.log(JSON.stringify(searchText), searchText.val);
     
     if (searchText.val == ''){
       return workout;
@@ -158,37 +158,47 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     console.log("getAll Users");
     cm.data = [];
     cm.data2 = [];
-    var notuser = [];
-    var temp_array = [];
-    UserModel.getUsers($scope.sport.id)
-    .then(function (result) {
-      var tempo_users = result.data.relatedObjects.users;
-      for (var user in tempo_users){
-        if (!angular.toJson(temp_array).includes(angular.toJson(user))){
-          temp_array.push(tempo_users[user]);
+    UserModel.all().then(function(results){
+      results.data.data.forEach(function(item){
+        if (item.users_sports.includes($scope.sport.id)){
+          cm.data.push(item)
         }
-      }
-      cm.data = temp_array;
-      
-      UserModel.all()
-      .then(function(result){
-        var da = result.data.data;
-        var fake_array = []
-        var bu;
-        
-        for (var baduser in da){
-          bu = da[baduser];
-          if (!(notuser.includes(angular.toJson(bu))) && 
-              !angular.toJson(temp_array).includes(angular.toJson(bu))){
-            notuser.push(bu);
-          }
+        else{
+          cm.data2.push(item)
         }
-        cm.data2 = notuser;
       });
+    });
+    // var notuser = [];
+    // var temp_array = [];
+    // UserModel.getUsers($scope.sport.id)
+    // .then(function (result) {
+    //   var tempo_users = result.data.relatedObjects.users;
+    //   for (var user in tempo_users){
+    //     if (!angular.toJson(temp_array).includes(angular.toJson(user))){
+    //       temp_array.push(tempo_users[user]);
+    //     }
+    //   }
+    //   cm.data = temp_array;
+      
+    //   UserModel.all()
+    //   .then(function(result){
+    //     var da = result.data.data;
+    //     var fake_array = []
+    //     var bu;
+        
+    //     for (var baduser in da){
+    //       bu = da[baduser];
+    //       if (!(notuser.includes(angular.toJson(bu))) && 
+    //           !angular.toJson(temp_array).includes(angular.toJson(bu))){
+    //         notuser.push(bu);
+    //       }
+    //     }
+    //     cm.data2 = notuser;
+    //   });
 
         
-        console.log("cm.data", JSON.stringify(cm.data));
-    });
+    //     console.log("cm.data", JSON.stringify(cm.data));
+    // });
 
   }
       
@@ -326,6 +336,12 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 .controller('SportEditorCtrl', function($rootScope, $scope, UserSportModel, $state, Backand, formData, SportModel) {
   var usm = this;
 
+  if ($rootScope.sport != null){
+    console.log($rootScope.sport);
+    usm.sport = $rootScope.sport;
+    console.log(usm.sport.name);
+  }
+  
   $scope.user = {};
   $scope.users = {};
   var userId;
@@ -365,6 +381,30 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     console.log("sporteditor formsubmit");
     $state.go('tab.workoutsexercises');
     
+  };
+  
+  function update(object){
+    UserSportModel.fetch(object.id).then(function (result){
+      console.log("stuff", JSON.stringify(result));
+    });
+    console.log(JSON.stringify(usm.sport));
+    console.log("update wo", JSON.stringify(object));
+    UserSportModel.update(object)
+    .then(function (result){
+      console.log("then");
+    },
+    function (error){
+      console.log('error', JSON.stringify(error));
+    });
+    cancelCreate();
+    getAll();
+    $state.go("tab.sport");
+  }
+  
+  $scope.edit = function(sport){
+    console.log("workout_update", JSON.stringify(sport));
+    $rootScope.sport = sport;
+    $state.go('tab.sportupdate');
   };
   
   function getAll(){
@@ -424,6 +464,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   usm.isCurrent = isCurrent;
   usm.cancelEditing = cancelEditing;
   usm.cancelCreate = cancelCreate;
+  usm.update = update;
   $rootScope.$on("authorized", function() {
     getAll();
   });
@@ -672,6 +713,18 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 .controller('WorkoutExerciseCtrl', function($rootScope, $scope, WorkoutExerciseModel, ExerciseListModel, $state, Backand, formData) {
   var wte = this;
   
+  if ($rootScope.wo != null){
+    console.log($rootScope.wo);
+    wte.wo = $rootScope.wo;
+    console.log(wte.wo.name)
+  }
+  
+  if(!angular.isDefined($scope.searchText)){
+    console.log("init");
+    $scope.searchText = {};
+    $scope.searchText.val='';  
+  } 
+  
   $scope.exercise = {};
   //$scope.users = {};
   var exerciseId;
@@ -716,37 +769,72 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     });
   };
   
-   function getEx(){
-    console.log("getEx");
-    var temp_ex = [];
-    //console.log(JSON.stringify($scope.workouts));
-    var exlist_p = WorkoutExerciseModel.getEx(parseInt($scope.workouts.id));
-    exlist_p.then(function (result){
-      console.log(JSON.stringify(result.data.relatedObjects.exercises));
-      var exercises = result.data.relatedObjects.exercises;
-      for (var index in exercises)
-        temp_ex.push(exercises[index]);
-        
-       ExerciseListModel.all()
-      .then(function(result){
-        var all_ex = result.data.data;
-        var not_ex = []
-        var curr_ex;
-        
-        for (var baduser in all_ex){
-          curr_ex = all_ex[baduser];
-         // console.log("curr_ex", JSON.stringify(curr_ex));
-          if (!(not_ex.includes(angular.toJson(curr_ex))) && 
-              !angular.toJson(temp_ex).includes(angular.toJson(curr_ex))){
-            not_ex.push(curr_ex);
-          }
-        }
-        wte.check2 = not_ex;
-      });
-
+   function update(object){
+    WorkoutExerciseModel.fetch(object.id).then(function (result){
+      console.log("stuff", JSON.stringify(result));
     });
+    console.log("update wo", JSON.stringify(object));
+    WorkoutExerciseModel.update(object)
+    .then(function (result){
+      console.log("then");
+    },
+    function (error){
+      console.log('error', JSON.stringify(error));
+    });
+    cancelCreate();
+    getAll();
+    $state.go("tab.workout");
+  }
+  
+  $scope.edit = function(workout){
+    console.log("workout_update", JSON.stringify(workout));
+    $rootScope.wo = workout;
+    $state.go('tab.workoutsupdate');
+  };
+  
+   function getEx(){
+     wte.check = [];
+     wte.check2 = [];
+     ExerciseListModel.all().then(function(result){
+        result.data.data.forEach(function(item){
+          if (item.workouts.includes($scope.workouts.id)){
+            wte.check.push(item);
+          }
+          else{
+            wte.check2.push(item);
+          }
+        });
+     });
+    // console.log("getEx");
+    // var temp_ex = [];
+    // //console.log(JSON.stringify($scope.workouts));
+    // var exlist_p = WorkoutExerciseModel.getEx(parseInt($scope.workouts.id));
+    // exlist_p.then(function (result){
+    //   console.log(JSON.stringify(result.data.relatedObjects.exercises));
+    //   var exercises = result.data.relatedObjects.exercises;
+    //   for (var index in exercises)
+    //     temp_ex.push(exercises[index]);
+        
+    //   ExerciseListModel.all()
+    //   .then(function(result){
+    //     var all_ex = result.data.data;
+    //     var not_ex = []
+    //     var curr_ex;
+        
+    //     for (var baduser in all_ex){
+    //       curr_ex = all_ex[baduser];
+    //     // console.log("curr_ex", JSON.stringify(curr_ex));
+    //       if (!(not_ex.includes(angular.toJson(curr_ex))) && 
+    //           !angular.toJson(temp_ex).includes(angular.toJson(curr_ex))){
+    //         not_ex.push(curr_ex);
+    //       }
+    //     }
+    //     wte.check2 = not_ex;
+    //   });
+
+    // });
     
-    wte.check = temp_ex;
+    // wte.check = temp_ex;
   }
   function getAll(){
     WorkoutExerciseModel.all()
@@ -806,6 +894,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   wte.cancelEditing = cancelEditing;
   wte.cancelCreate = cancelCreate;
   wte.remove = remove;
+  wte.update = update;
   $rootScope.$on("authorized", function() {
     getAll();
     console.log("WorkoutExercise.authorized");
@@ -999,6 +1088,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     $rootScope.ex = exercise;
     $state.go('tab.exerciseupdate');
   };
+  
   if(!angular.isDefined($scope.searchText)){
     console.log("init");
     $scope.searchText = {};
@@ -1073,7 +1163,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 
 })
 
-.controller('AnalysisCtrl', function($rootScope, $scope, Backand, $state, SurveyService, UserModel) {
+.controller('AnalysisCtrl', function($rootScope, $scope, Backand, $state, SurveyService, UserModel, SportModel, ExerciseListModel) {
   var sv = this;
   $scope.date = null;
   $scope.init = function(value) {
@@ -1088,120 +1178,522 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     sv.dates = [];
   }
   
+  $scope.showSports = function(asport){
+    $rootScope.surveys.forEach(function(survey){
+      if (asport.id == survey.sport){
+        
+      }
+    });
+  };
   $scope.export= function(){
-    var csv_array = [];
     var csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "user,bodyWeightOut,practiceDifficulty,fatigueLevelPost,Date,bodyWeightIn,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,sleepQuality,lastName,firstName"+ "\n";
+    csvContent += "lastName,firstName,bodyWeightOut,practiceDifficulty,fatigueLevelPost,Date,bodyWeightIn,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,sleepQuality"+ "\n";
+    var csv_array = [];
     $rootScope.surveys.forEach(function(infoArray, index){
-    for (var item in infoArray){
-     if (item != "id" && item != "__metadata" && item != "$$hashKey"){
-        csv_array.push(infoArray[item]);
-      }  
-    }
-
+      console.log("test_analysis", JSON.stringify(csv_array));
+      csv_array.push(infoArray['lastName'], infoArray["firstName"], 
+      infoArray["bodyWeightOut"], infoArray["practiceDifficulty"], infoArray["fatigueLevelPost"],
+      infoArray["Date"], infoArray["bodyWeightIn"], infoArray["hoursSleep"], 
+      infoArray["stressLevel"], infoArray["muscleSoreness"], infoArray["fatigueLevelPre"],
+      infoArray["sleepQuality"], infoArray["user"], "\n");
+    });   
     var dataString = csv_array.join(",");
     csvContent += dataString + "\n";
-    console.log("csv", csvContent, JSON.stringify(infoArray));
-
-});   
+    csvContent = csvContent.replace("\n,", "\n");
+    
     var encodedUri = encodeURI(csvContent);
     var link = document.getElementById("hiddenbutton");
     link.href = encodedUri;
     link.download = "varsityfit.csv";
-  }
+    console.log("link", JSON.stringify(link.href));
+  };
   
-  $scope.charts = function(survey){
+  $scope.charts = function(survey, kind){
     console.log(JSON.stringify(survey));
-    $rootScope.ag = survey;
+    $rootScope.ag = [];
+    $rootScope.ag.push(survey);
+    $rootScope.ag.push(kind);
     $state.go('tab.analysisgraphs');
-  }
+  };
   
   function getAll() {
     console.log(JSON.stringify($scope.date), JSON.stringify(sv.date));
     SurveyService.all()
     .then(function(result){
      // console.log(JSON.stringify(result));
-      var counter = 0;
-      var temp_surveys = [];
-      for(var survey2 in result.data.data){
-        //console.log("onetwo", JSON.stringify(result.data.data[survey2]));
-        var loop_date = '';
-       // console.log(JSON.stringify(temp_surveys));
-        loop_date = result.data.data[survey2].user;
-          if (!temp_surveys.includes(angular.toJson(result.data.data[survey2]))){
-              temp_surveys.push(result.data.data[survey2]);
-          }
-        //console.log("loop", loop_date);
-        counter++;
-      }
-    
-    temp_surveys.forEach(function(survey_obj){
-      var user_id = survey_obj.user;
+          var temp_surveys = [];
+      result.data.data.forEach(function(survey){
+        temp_surveys.push(survey);
+      });
+      
+      temp_surveys.forEach(function(survey_obj){
+        var user_id = survey_obj.user;
           UserModel.fetch(user_id).then(function(results){
             survey_obj.lastName = results.data.lastName;
             survey_obj.firstName = results.data.firstName;
-            survey_obj.date = survey_obj.date.slice(0, 10);
-            // result.data.data[survey2].lastName = results.data.lastName;
-            // result.data.data[survey2].firstName = results.data.firstName;
+            if (typeof survey_obj.date != 'object'){
+              survey_obj.date = survey_obj.date.slice(0, 10);
+            }
           }
         );
     });
     sv.surveys = temp_surveys;
     $rootScope.surveys = sv.surveys;
     });
-    
-    
-    
   }
+  
+  function getUserSurveys(){
+    var temp_users = [];
+    UserModel.all().then(function(result){
+      result.data.data.forEach(function(survey){
+        temp_users.push(survey);
+      });
+    sv.userSurveys = temp_users;
+    });
+  }
+  
+  function getSportSurveys() {
+    var temp_sports = [];
+    SportModel.all().then(function(result){
+      result.data.data.forEach(function(survey){
+        temp_sports.push(survey);
+      });
+      sv.sportSurveys = temp_sports;
+    });
+  }
+  
+  function getExerciseSurveys(){
+    var temp_ex = [];
+    ExerciseListModel.all().then(function(result){
+      result.data.data.forEach(function(ex){
+        temp_ex.push(ex);
+      });
+    sv.exerciseSurveys = temp_ex;
+    });
+  }
+  getExerciseSurveys();
+  getSportSurveys();
+  getUserSurveys();
   getAll();
 })
 
-.controller("GraphCtrl", function ($scope, $rootScope, Backand, SurveyService) {
-  $scope.firstName = $rootScope.ag.firstName;
+.controller("GraphCtrl", function ($scope, $rootScope, Backand, SurveyService, UserModel) {
+  $scope.firstName = $rootScope.ag[0].firstName || $rootScope.ag[0].name;
   console.log("fn", $scope.firstName);
   var gc = this;
-  console.log("ag", JSON.stringify($rootScope.ag));
+  console.log("ag", $rootScope.ag[1], $rootScope.ag[1] == "user");
   $scope.labels = [];
   $scope.bodyweightin = [];
   gc.stress = [];
-  $scope.series = ['Body Weight In'];
+  gc.weight = [];
+  gc.fatigue = [];
+  gc.exportText = '';
+  if (typeof $rootScope.surveys == undefined){
+    $rootScope.surveys = [];
+  }
   
-  SurveyService.userSurveys($rootScope.ag.user).then(function(result){
-    console.log(JSON.stringify(result.data.totalRows));
-    
-    var temp_bw = [];
-    var fatigueIn = [];
-    var stress = [];
-  
-    result.data.data.forEach(function(survey){
-      $scope.labels.push(survey.date.slice(0, 10));
-      temp_bw.push(survey.bodyWeightIn);
-      
-      stress.push(survey.stressLevel);
-      fatigueIn.push(survey.fatigueLevelPre);
+  function prepExport() {
+    var csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "lastName,firstName,bodyWeightOut,practiceDifficulty,fatigueLevelPost,Date,bodyWeightIn,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,sleepQuality"+ "\n";
+    var csv_array = [];
+    var namePromise = [];
+    console.log("prep export");
+    $rootScope.surveys.forEach(function(infoArray, index){
+    console.log("sports k;asdf", JSON.stringify(infoArray));
+    var firstName = '';
+    var lastName = '';
+    namePromise = UserModel.fetch(infoArray['user']);
+    namePromise.then(function(result){
+      console.log("success", JSON.stringify(result.data));
+      firstName = result.data['firstName'];
+      lastName = result.data['lastName'];
+        console.log("test", JSON.stringify(csv_array), firstName);
+        csv_array.push(lastName, firstName, 
+        infoArray["bodyWeightOut"], infoArray["practiceDifficulty"], infoArray["fatigueLevelPost"],
+        infoArray["Date"], infoArray["bodyWeightIn"], infoArray["hoursSleep"], 
+        infoArray["stressLevel"], infoArray["muscleSoreness"], infoArray["fatigueLevelPre"],
+        infoArray["sleepQuality"], infoArray["user"], "\n");
+        
+      });
     });
     
-    $scope.bodyweightin.push(temp_bw);
-         
-    console.log("lookhere",Math.min.apply(null, $scope.bodyweightin[0])-10, $scope.bodyweightin[0]);
-    gc.stress.push(stress);
-    gc.stress.push(fatigueIn);
-    gc.stressSeries = ['Stress','Fatigue In'];
+    namePromise.then(function(result){
+       var dataString = csv_array.join(",");
+    csvContent += dataString + "\n";
+    csvContent = csvContent.replace("\n,", "\n");
+    gc.exportText = csvContent;
+    console.log("exportText", JSON.stringify(gc.exportText));  
+    })
     
-    console.log("3barchart", JSON.stringify(gc.stress), gc.fatigueIn);
-    console.log("labels", JSON.stringify($scope.labels));
-    console.log("bwi", JSON.stringify($scope.bodyweightin));
-    $scope.options = {
-      title: {display:true, text:"Weight"},
-      scales: { yAxes: [{ ticks: { min:Math.min.apply(null,$scope.bodyweightin[0])-5, 
-      max:Math.max.apply(null,$scope.bodyweightin[0])+5} }] }
-    };
-    gc.stressOptions = {
-      title: {display:true, text: "Stress and Fatigue"},
-      scales: { yAxes: [{ ticks: { min:0, max:5, stepSize:1} }] }
-    };
-  });
- 
+  }
+   $scope.export= function(){
+    
+    var encodedUri = encodeURI(gc.exportText);
+    var link = document.getElementById("graphButton");
+    link.href = encodedUri;
+    link.download = "varsityfit.csv";
+    console.log("link", JSON.stringify(link.href));
+  
+  };
+  
+  if ($rootScope.ag[1] == "user"){
+    console.log("user graphs", $rootScope.ag[0].id);
+    SurveyService.userSurveys($rootScope.ag[0].id).then(function(result){
+      var today = new Date();
+      var start = new Date(2017,01,20);
+      var fatigueIn = [];
+      var stress = [];
+      var weightOutData = [];
+      var weightInData = [];
+      var fatigueOut = [];
+      var sleepQuality = [];
+      var sleepHours = [];
+      var difficulty = [];
+      var surveys = [];
+
+      for (var i = new Date(2017,01,20); i <= today; i.setDate(i.getDate() + 1)){
+        var count = 0;
+        var totalStress = 0;
+        var totalWeightIn = 0;
+        var totalWeightOut = 0;
+        var totalFatigueIn = 0;
+        var totalFatigueOut = 0;
+        var totalSleepHours = 0;
+        var totalSleepQuality = 0;
+        var totalDifficulty = 0;
+        result.data.data.forEach(function(survey){
+          if (!$scope.labels.includes(survey.date.slice(0,10))){
+            $scope.labels.push(survey.date.slice(0,10));
+          }
+          console.log("surveys includes", JSON.stringify(survey), "next one \n", JSON.stringify(surveys));
+          if (!JSON.stringify(surveys).includes(JSON.stringify(survey))){
+            surveys.push(survey);
+          }
+
+          if ( survey.date.slice(0,10) == i.toJSON().slice(0,10)){
+            count +=1;
+            totalStress += survey.stressLevel;
+            totalWeightIn += survey.bodyWeightIn;
+            totalWeightOut += survey.bodyWeightOut;
+            totalFatigueIn += survey.fatigueLevelPre;
+            totalFatigueOut += survey.fatigueLevelPost;
+            totalSleepQuality += survey.sleepQuality;
+            totalSleepHours += survey.hoursSleep;
+            totalDifficulty += survey.practiceDifficulty;
+          }
+        });
+        
+        totalStress = totalStress/count;
+        totalFatigueIn = totalFatigueIn/count;
+        totalFatigueOut = totalFatigueOut/count;
+        totalWeightIn = totalWeightIn/count;
+        totalWeightOut = totalWeightOut/count;
+        totalSleepHours = totalSleepHours/count;
+        totalSleepQuality = totalSleepQuality/count;
+        totalDifficulty = totalDifficulty/count;
+        
+        if (totalStress > 0){
+          weightOutData.push(totalWeightOut);
+          weightInData.push(totalWeightIn);
+          stress.push(totalStress);
+          fatigueIn.push(totalFatigueIn);
+          fatigueOut.push(totalFatigueOut);
+          difficulty.push(totalDifficulty);
+          sleepHours.push(totalSleepHours);
+          sleepQuality.push(totalSleepQuality);
+        }
+        
+      }
+      gc.stress.push(stress);
+      gc.stress.push(sleepQuality);
+      gc.stress.push(sleepHours);
+      gc.weight.push(weightInData);
+      gc.weight.push(weightOutData);
+      gc.fatigue.push(fatigueIn);
+      gc.fatigue.push(fatigueOut);
+      gc.fatigue.push(difficulty);
+      $rootScope.surveys = surveys;
+      
+      gc.fatigueSeries = ['Fatigue Pre', 'Fatigue Post', 'Workout Difficulty'];
+      gc.stressSeries = ['Stress','Sleep Quality', 'Hours Slept'];
+      gc.weightSeries = ['Weight Pre', 'Weight Post'];
+    });
+    
+  gc.weightOptions = {
+  title: {display:true, text:"Weight"},
+  scales: { yAxes: [{ ticks: { min:100, max:170} }] }
+  };
+  
+  gc.stressOptions = {
+      title: {display:true, text: "Stress and Sleep"},
+      scales: { yAxes: [{ ticks: {min: 0, max: 12,stepSize:1} }] },
+      elements: {line: {fill: false} }
+  };
+  
+  gc.fatigueOptions = {
+    title: {display:true, text: "Fatigue and Difficulty"},
+    scales: { yAxes: [{ ticks: {min:0, stepSize:1} }] }
+  };
+  
+  gc.override = [
+    {
+      label:"Bar chart",
+      borderWidth: 1,
+      type: 'bar'
+    },
+    {
+      label:"Bar chart",
+      borderWidth: 1,
+      type: 'bar'
+    },
+    {
+      label: "Line chart",
+      borderWidth: 3,
+      hoverBackgroundColor: "rgba(255,99,132,0.4)",
+      hoverBorderColor: "rgba(255,99,132,1)",
+      type: 'line',    
+    }
+    ];
+}
+
+  if ($rootScope.ag[1] == 'sport'){
+    console.log("sportsurvey", $rootScope.ag[0].id); 
+    SurveyService.sportSurveys($rootScope.ag[0].id).then(function(result){
+      var today = new Date();
+      var start = new Date(2017,01,20);
+      var fatigueIn = [];
+      var stress = [];
+      var weightOutData = [];
+      var weightInData = [];
+      var fatigueOut = [];
+      var sleepQuality = [];
+      var sleepHours = [];
+      var difficulty = [];
+      var surveys = [];
+
+      for (var i = new Date(2017,01,20); i <= today; i.setDate(i.getDate() + 1)){
+        var count = 0;
+        var totalStress = 0;
+        var totalWeightIn = 0;
+        var totalWeightOut = 0;
+        var totalFatigueIn = 0;
+        var totalFatigueOut = 0;
+        var totalSleepHours = 0;
+        var totalSleepQuality = 0;
+        var totalDifficulty = 0;
+        result.data.data.forEach(function(survey){
+          if (!$scope.labels.includes(survey.date.slice(0,10))){
+            $scope.labels.push(survey.date.slice(0,10));
+          }
+          if (!surveys.includes(survey)){
+            surveys.push(survey);
+          }
+          if ( survey.date.slice(0,10) == i.toJSON().slice(0,10)){
+            count +=1;
+            totalStress += survey.stressLevel;
+            totalWeightIn += survey.bodyWeightIn;
+            totalWeightOut += survey.bodyWeightOut;
+            totalFatigueIn += survey.fatigueLevelPre;
+            totalFatigueOut += survey.fatigueLevelPost;
+            totalSleepQuality += survey.sleepQuality;
+            totalSleepHours += survey.hoursSleep;
+            totalDifficulty += survey.practiceDifficulty;
+          }
+        });
+        
+        totalStress = totalStress/count;
+        totalFatigueIn = totalFatigueIn/count;
+        totalFatigueOut = totalFatigueOut/count;
+        totalWeightIn = totalWeightIn/count;
+        totalWeightOut = totalWeightOut/count;
+        totalSleepHours = totalSleepHours/count;
+        totalSleepQuality = totalSleepQuality/count;
+        totalDifficulty = totalDifficulty/count;
+        
+        if (totalStress > 0){
+          weightOutData.push(totalWeightOut);
+          weightInData.push(totalWeightIn);
+          stress.push(totalStress);
+          fatigueIn.push(totalFatigueIn);
+          fatigueOut.push(totalFatigueOut);
+          difficulty.push(totalDifficulty);
+          sleepHours.push(totalSleepHours);
+          sleepQuality.push(totalSleepQuality);
+        }
+      }
+      
+      gc.stress.push(stress);
+      gc.stress.push(sleepQuality);
+      gc.stress.push(sleepHours);
+      gc.weight.push(weightInData);
+      gc.weight.push(weightOutData);
+      gc.fatigue.push(fatigueIn);
+      gc.fatigue.push(fatigueOut);
+      gc.fatigue.push(difficulty);
+      
+      $rootScope.surveys = surveys;
+      
+      gc.fatigueSeries = ['Fatigue Pre', 'Fatigue Post', 'Workout Difficulty'];
+      gc.stressSeries = ['Stress','Sleep Quality', 'Hours Slept'];
+      gc.weightSeries = ['Weight Pre', 'Weight Post'];
+    });
+    
+  gc.weightOptions = {
+  title: {display:true, text:"Weight"},
+  scales: { yAxes: [{ ticks: { min:100, max:170} }] }
+  };
+  
+  gc.stressOptions = {
+      title: {display:true, text: "Stress and Sleep"},
+      scales: { yAxes: [{ ticks: {min: 0, max: 12,stepSize:1} }] },
+      elements: {line: {fill: false} }
+  };
+  
+  gc.fatigueOptions = {
+    title: {display:true, text: "Fatigue and Difficulty"},
+    scales: { yAxes: [{ ticks: {min:0, stepSize:1} }] }
+  };
+  
+  gc.override = [
+    {
+      label:"Bar chart",
+      borderWidth: 1,
+      type: 'bar'
+    },
+    {
+      label:"Bar chart",
+      borderWidth: 1,
+      type: 'bar'
+    },
+    {
+      label: "Line chart",
+      borderWidth: 3,
+      hoverBackgroundColor: "rgba(255,99,132,0.4)",
+      hoverBorderColor: "rgba(255,99,132,1)",
+      type: 'line',    
+    }
+    ];
+  }
+
+  if ($rootScope.ag[1] == 'exercise'){
+    console.log("sportsurvey", $rootScope.ag[0].id); 
+    SurveyService.exerciseSurveys($rootScope.ag[0].id).then(function(result){
+      var today = new Date();
+      var start = new Date(2017,01,20);
+      var fatigueIn = [];
+      var stress = [];
+      var weightOutData = [];
+      var weightInData = [];
+      var fatigueOut = [];
+      var sleepQuality = [];
+      var sleepHours = [];
+      var difficulty = [];
+      var surveys = [];
+      
+      //console.log("survey sports", JSON.stringify(result.data.data[0]));
+      for (var i = new Date(2017,01,20); i <= today; i.setDate(i.getDate() + 1)){
+        var count = 0;
+        var totalStress = 0;
+        var totalWeightIn = 0;
+        var totalWeightOut = 0;
+        var totalFatigueIn = 0;
+        var totalFatigueOut = 0;
+        var totalSleepHours = 0;
+        var totalSleepQuality = 0;
+        var totalDifficulty = 0;
+        result.data.data.forEach(function(survey){
+          if (!$scope.labels.includes(survey.date.slice(0,10))){
+            $scope.labels.push(survey.date.slice(0,10));
+          }
+          if (!surveys.includes(survey)){
+            surveys.push(survey);
+          }
+          if ( survey.date.slice(0,10) == i.toJSON().slice(0,10)){
+            count +=1;
+            totalStress += survey.stressLevel;
+            totalWeightIn += survey.bodyWeightIn;
+            totalWeightOut += survey.bodyWeightOut;
+            totalFatigueIn += survey.fatigueLevelPre;
+            totalFatigueOut += survey.fatigueLevelPost;
+            totalSleepQuality += survey.sleepQuality;
+            totalSleepHours += survey.hoursSleep;
+            totalDifficulty += survey.practiceDifficulty;
+          }
+        });
+        
+        totalStress = totalStress/count;
+        totalFatigueIn = totalFatigueIn/count;
+        totalFatigueOut = totalFatigueOut/count;
+        totalWeightIn = totalWeightIn/count;
+        totalWeightOut = totalWeightOut/count;
+        totalSleepHours = totalSleepHours/count;
+        totalSleepQuality = totalSleepQuality/count;
+        totalDifficulty = totalDifficulty/count;
+        
+        if (totalStress > 0){
+          weightOutData.push(totalWeightOut);
+          weightInData.push(totalWeightIn);
+          stress.push(totalStress);
+          fatigueIn.push(totalFatigueIn);
+          fatigueOut.push(totalFatigueOut);
+          difficulty.push(totalDifficulty);
+          sleepHours.push(totalSleepHours);
+          sleepQuality.push(totalSleepQuality);
+        }
+
+      }
+      gc.stress.push(stress);
+      gc.stress.push(sleepQuality);
+      gc.stress.push(sleepHours);
+      gc.weight.push(weightInData);
+      gc.weight.push(weightOutData);
+      gc.fatigue.push(fatigueIn);
+      gc.fatigue.push(fatigueOut);
+      gc.fatigue.push(difficulty);
+      
+      $rootScope.surveys = surveys;
+      
+      gc.fatigueSeries = ['Fatigue Pre', 'Fatigue Post', 'Workout Difficulty'];
+      gc.stressSeries = ['Stress','Sleep Quality', 'Hours Slept'];
+      gc.weightSeries = ['Weight Pre', 'Weight Post'];
+    });
+    
+  gc.weightOptions = {
+  title: {display:true, text:"Weight"},
+  scales: { yAxes: [{ ticks: { min:100, max:170} }] }
+  };
+  gc.stressOptions = {
+      title: {display:true, text: "Stress and Sleep"},
+      scales: { yAxes: [{ ticks: {min: 0, max: 12,stepSize:1} }] },
+      elements: {line: {fill: false} }
+  };
+  gc.fatigueOptions = {
+    title: {display:true, text: "Fatigue and Difficulty"},
+    scales: { yAxes: [{ ticks: {min:0, stepSize:1} }] }
+  };
+  
+  gc.override = [
+    {
+      label:"Bar chart",
+      borderWidth: 1,
+      type: 'bar'
+    },
+    {
+      label:"Bar chart",
+      borderWidth: 1,
+      type: 'bar'
+    },
+    {
+      label: "Line chart",
+      borderWidth: 3,
+      hoverBackgroundColor: "rgba(255,99,132,0.4)",
+      hoverBorderColor: "rgba(255,99,132,1)",
+      type: 'line',    
+    }
+    ];
+  }  
+  
+  prepExport();
 })
 
 .controller('AccountCtrl', function($scope, Backand, $state) {

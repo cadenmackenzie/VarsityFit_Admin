@@ -1,4 +1,11 @@
 <ion-view view-title="{{sport.name}}">
+    
+    <ion-nav-buttons side="right">
+        <a id = "hiddenbutton" class="button button-balanced" ng-click="edit(sport)">
+            Change Name
+        </a>
+    </ion-nav-buttons>
+    
         <ion-content>
             <ul class = "list" id="users" style="width:75%; float:left">
                 <li class="item" style="font-size: 30px;  font-weight: 500;">Athletes</li>

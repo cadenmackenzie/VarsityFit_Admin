@@ -992,6 +992,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     vm.ex.name = $rootScope.ex.name;
     vm.ex.reps = $rootScope.ex.reps;
     vm.ex.sets = $rootScope.ex.sets;
+    vm.ex.url = $rootScope.ex.url;
   }
   
   
@@ -1004,14 +1005,10 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   }
   
   function update(object){
-    ExerciseModel.fetch(object.id).then(function (result){
-      console.log("stuff", JSON.stringify(result));
-    });
-    console.log(JSON.stringify(vm.ex));
-    console.log("update ex", JSON.stringify(object));
+    console.log("update ex");
     ExerciseModel.update(object)
     .then(function (result){
-      console.log("then");
+      console.log("updated exercise", JSON.stringify(result));
     },
     function (error){
       console.log('error', JSON.stringify(error));
@@ -1323,11 +1320,12 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     csvContent = csvContent.replace("\n,", "\n");
     gc.exportText = csvContent;
     console.log("exportText", JSON.stringify(gc.exportText));  
-    })
-    
+    return namePromise;
+    });
   }
+  
    $scope.export= function(){
-    
+    prepExport();
     var encodedUri = encodeURI(gc.exportText);
     var link = document.getElementById("graphButton");
     link.href = encodedUri;
@@ -1693,7 +1691,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     ];
   }  
   
-  prepExport();
+  //prepExport(); running this everytime will not only lag the webpage, but cause backend issues
 })
 
 .controller('AccountCtrl', function($scope, Backand, $state) {

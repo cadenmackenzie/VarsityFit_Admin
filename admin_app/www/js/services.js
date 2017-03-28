@@ -160,7 +160,6 @@ angular.module('starter.services', [])
         };
         
         service.update = function(objecto){
-            console.log("serviceo", JSON.stringify(objecto));
              return $http({
           method: 'PUT',
           url : getUrl() + objecto.id,
@@ -168,7 +167,8 @@ angular.module('starter.services', [])
                 "id": objecto.id,
             	"name": objecto.name,
             	"sets": objecto.sets,
-            	"reps": objecto.reps
+            	"reps": objecto.reps,
+            	"url": objecto.url
           },
       });
         };

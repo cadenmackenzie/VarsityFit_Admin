@@ -1184,19 +1184,19 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   };
   $scope.export= function(){
     var csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "lastName,firstName,bodyWeightOut,practiceDifficulty,fatigueLevelPost,Date,bodyWeightIn,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,sleepQuality"+ "\n";
+    csvContent += "Name,Date,bodyWeightIn,bodyWeightOut,sleepQuality,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,fatigueLevelPost, practiceDifficulty,"+ "\n";
     var csv_array = [];
     $rootScope.surveys.forEach(function(infoArray, index){
       console.log("test_analysis", JSON.stringify(csv_array));
-      csv_array.push(infoArray['lastName'], infoArray["firstName"], 
-      infoArray["bodyWeightOut"], infoArray["practiceDifficulty"], infoArray["fatigueLevelPost"],
-      infoArray["Date"], infoArray["bodyWeightIn"], infoArray["hoursSleep"], 
-      infoArray["stressLevel"], infoArray["muscleSoreness"], infoArray["fatigueLevelPre"],
-      infoArray["sleepQuality"], infoArray["user"], "\n");
+      csv_array.push(infoArray["firstName"] + " " + infoArray['lastName'], infoArray["Date"] ,
+      infoArray["bodyWeightIn"], infoArray["bodyWeightOut"], infoArray["sleepQuality"],
+      infoArray["hoursSleep"], infoArray["stressLevel"], infoArray["muscleSoreness"],
+      infoArray["fatigueLevelPre"],infoArray["fatigueLevelPost"],
+      infoArray["practiceDifficulty"],"\n");
     });   
     var dataString = csv_array.join(",");
     csvContent += dataString + "\n";
-    csvContent = csvContent.replace("\n,", "\n");
+    csvContent = csvContent.replace(/\n,/g, "\n");
     
     var encodedUri = encodeURI(csvContent);
     var link = document.getElementById("hiddenbutton");

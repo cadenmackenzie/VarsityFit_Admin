@@ -1175,13 +1175,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     sv.dates = [];
   }
   
-  $scope.showSports = function(asport){
-    $rootScope.surveys.forEach(function(survey){
-      if (asport.id == survey.sport){
-        
-      }
-    });
-  };
   $scope.export= function(){
     var csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "Name,Date,bodyWeightIn,bodyWeightOut,sleepQuality,hoursSleep,stressLevel,muscleSoreness,fatigueLevelPre,fatigueLevelPost, practiceDifficulty,"+ "\n";
@@ -1217,8 +1210,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     console.log(JSON.stringify($scope.date), JSON.stringify(sv.date));
     SurveyService.all()
     .then(function(result){
-     // console.log(JSON.stringify(result));
-          var temp_surveys = [];
+      var temp_surveys = [];
       result.data.data.forEach(function(survey){
         temp_surveys.push(survey);
       });

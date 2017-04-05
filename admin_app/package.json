@@ -2,10 +2,10 @@
   "name": "varsityfit",
   "version": "1.0.0",
   "description": "Web portion of Varsity Fit",
-  "main": "gulpfile.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node gulpfile.js"
+    "start": "www/js/app.js"
   },
   "author": "Varsity Fit",
   "license": "ISC",

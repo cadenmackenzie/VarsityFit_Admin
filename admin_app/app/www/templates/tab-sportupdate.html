@@ -1,0 +1,29 @@
+<ion-view view-title="Sport Update">
+
+    <div>
+        <ion-content class="padding has-header">
+            <!-- CREATING -->
+            <div class="bar bar-header">
+                <span ng-click="usm.cancelCreate()" class="cancel-create">Cancel</span>
+            </div>
+            
+            <div ng-if="!usm.isCreating && !usm.isEditing">
+                  <form class="create-form" role="form"
+                        ng-submit="usm.update(usm.sport)" novalidate>
+                      <div class="list has-header padding">
+                          <label class="item item-input item-stacked-label">
+                              <span class="input-label">Name</span>
+                              <input type="text" class="form-control"
+                                  ng-model="usm.sport.name"
+                                     placeholder="{{usm.sport.name}}">
+                          </label>
+                      </div>
+                
+                    <br></br>
+                    <button class="button button-block button-dark">Submit</button>
+                </form>
+            </div>
+        </ion-content>
+    </div>
+
+</ion-view>

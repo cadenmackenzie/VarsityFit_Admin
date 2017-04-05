@@ -1,0 +1,46 @@
+<ion-view view-title="{{workouts.name}}">
+    <ion-nav-buttons side="right">
+        <a class="button button-balanced" ng-click="edit(workouts)">
+            Change Name
+        </a>
+        <a class="button button-assertive" ng-controller="WorkoutCtrl as wlc"
+            ng-click="wlc.delete(workouts)">
+            <label class="string">
+                Remove
+            </label>
+        </a>
+    </ion-nav-buttons>
+        <ion-content>
+            <!--<form class="create-form" role="form" ng-submit="sm.create(newObject)" novalidate>-->
+                <div ng-controller="WorkoutExerciseCtrl as wte">
+                  <div ng-if="!wte.isCreating && !wte.isEditing">
+                    <ul class = "list">
+                     <div ng-repeat="exercise in wte.check" ng-checked="true" ng-click="removeExercise(exercise)">
+                      <li class="item item-checkbox" id="{{exercise.name}}">
+                       {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
+                        <label class ="checkbox" checked="true">
+                            <input type="checkbox" checked="true">
+                        </label>
+                      </li>
+                     </div>
+                   <li class= "item">
+                <label class="item-input-wrapper">
+                <i class="icon ion-ios-search placeholder-icon"></i>
+                <input class = "item-input-wrapper" type="text" placeholder="search" ng-model='searchText.val'></input>
+                </label>
+                </li>
+                    <div ng-repeat="exercise in wte.check2 | exerciseFilter:searchText" ng-click="addExercise(exercise)">
+                     <li class="item item-checkbox" id="{{exercise.name}}">
+                       {{ exercise.name}} - Reps: {{exercise.reps}} Sets: {{exercise.sets}}
+                        <label class ="checkbox">
+                            <input type="checkbox">
+                        </label>
+                      </li>
+                    </div>
+                    </ul>
+                  </div>
+                  <!--<button class="button button-block button-dark" ng-click="submitForm(users)" type="submit">Submit</button>-->
+
+              <!--</form>  -->
+         </ion-content>
+</ion-view>

@@ -1,0 +1,62 @@
+<ion-view view-title="Exercise Creator">
+
+    <div>
+        <ion-content class="padding has-header">
+            <!-- CREATING -->
+            <div class="bar bar-header">
+                <span ng-click="vm.cancelCreate()" class="cancel-create">Cancel</span>
+            </div>
+            
+            <div>
+                <form class="create-form" role="form"
+                      ng-submit="vm.create(vm.newObject)" novalidate>
+                    <div class="list has-header padding">
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">Name</span>
+                            <input type="text" class="form-control"
+                                ng-model="vm.newObject.name"
+                                placeholder="Name">
+                        </label>
+                        
+                        <label class="item item-input item-select">
+                            <span class="input-label">Repetitions</span>
+                            <select ng-model ="vm.newObject.reps">
+                                <option value=1>1</option>
+                                <option value=2>2</option>
+                                <option value=3>3</option>
+                                <option value=4>4</option>
+                                <option value=5>5</option>
+                                <option value=6>6</option>
+                                <option value=7>7</option>
+                                <option value=8>8</option>
+                                <option value=9>9</option>
+                                <option value=10>10</option>
+                            </select>
+                        </label>
+                -        
+                        
+                        <label class="item item-input item-select">
+                            <span class="input-label">Sets</span>
+                            <select ng-model ="vm.newObject.sets">
+                                <option value=1>1</option>
+                                <option value=2>2</option>
+                                <option value=3>3</option>
+                                <option value=4>4</option>
+                                <option value=5>5</option>
+                                <option value=6>6</option>
+                                <option value=7>7</option>
+                                <option value=8>8</option>
+                                <option value=9>9</option>
+                                <option value=10>10</option>
+                            </select>
+                        </label>                        
+                        
+                    </div>
+                    <br></br>
+                    <button class="button button-block button-dark" type="submit">Submit</button>
+                </form>
+            </div>
+        </ion-content>
+    </div>
+
+</ion-view>

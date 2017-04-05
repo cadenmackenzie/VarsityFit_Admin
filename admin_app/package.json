@@ -2,10 +2,10 @@
   "name": "varsityfit",
   "version": "1.0.0",
   "description": "Web portion of Varsity Fit",
-  "main": "app.js",
+  "main": "/www/js/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "start": "node /www/js/app.js"
   },
   "author": "Varsity Fit",
   "license": "ISC",

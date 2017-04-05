@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "www/js/app.js"
+    "start": "http-server -a localhost -p 8080"
   },
   "author": "Varsity Fit",
   "license": "ISC",

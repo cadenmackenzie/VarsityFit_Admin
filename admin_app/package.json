@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "ionic serve -p $PORT --nolivereload",
-    "preinstall": "npm install cordova -g && ionic platform add browser && ionic build browser"
+    "start": "node server.js"
   },
   "author": "Varsity Fit",
   "license": "ISC",
@@ -26,7 +25,6 @@
     "gulp-rename": "^1.2.2",
     "gulp-sass": "^3.1.0",
     "gulp-util": "^3.0.8",
-    "ionic": "^2.2.2",
     "shelljs": "^0.7.7"
   },
   "devDependencies": {

@@ -56,7 +56,7 @@
   "_id": "chart.js@2.5.0",
   "scripts": {},
   "_shasum": "fe6e751a893769f56e72bee5ad91207e1c592957",
-  "_from": "chart.js@latest",
+  "_from": "chart.js@>=2.5.0 <3.0.0",
   "_npmVersion": "3.8.3",
   "_nodeVersion": "5.10.1",
   "_npmUser": {
@@ -90,5 +90,6 @@
     "tmp": "tmp/chart.js-2.5.0.tgz_1486583551400_0.04586766008287668"
   },
   "directories": {},
-  "_resolved": "https://registry.npmjs.org/chart.js/-/chart.js-2.5.0.tgz"
+  "_resolved": "https://registry.npmjs.org/chart.js/-/chart.js-2.5.0.tgz",
+  "readme": "ERROR: No README data found!"
 }

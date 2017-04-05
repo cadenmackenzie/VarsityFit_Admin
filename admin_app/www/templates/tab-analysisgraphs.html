@@ -1,0 +1,32 @@
+<ion-view view-title="{{firstName}}'s Graphs">
+  
+  <ion-nav-buttons side="right">
+    <a id = "graphButton" class="button button-balanced" ng-click="export()">
+      Export for Excel
+    </a>
+  </ion-nav-buttons>
+  
+  <ion-content ng-controller = "GraphCtrl">
+    <div style="float: left; width: 33%;">
+      <canvas id="bar" class="chart chart-bar"
+        chart-data="gc.weight" chart-labels="labels" chart-series="gc.weightSeries" 
+        chart-options="gc.weightOptions"
+      </canvas>
+    </div>
+    
+    <div style="float: left; width: 33%;">
+      <canvas id="bar" class="chart chart-bar"
+        chart-data="gc.stress" chart-labels="labels" chart-series="gc.stressSeries" 
+        chart-options = "gc.stressOptions"  chart-dataset-override="gc.override" ;
+      </canvas>
+    </div>
+    
+    <div style="float: left; width: 33%;">
+      <canvas id="bar" class="chart chart-bar"
+        chart-data="gc.fatigue" chart-labels="labels" chart-series="gc.fatigueSeries" 
+        chart-options="gc.fatigueOptions"
+      </canvas>
+    </div>
+
+  </ion-content>
+</ion-view>

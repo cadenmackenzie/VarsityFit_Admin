@@ -62,7 +62,7 @@
                     <input class = "item-input-wrapper" type="text" placeholder="search" 
                     ng-model='searchText.val'></input>
                 </label>
-                    <div ng-repeat="workout in wlc.workouts2 | workoutFilter:searchText" 
+                    <div ng-repeat="workout in wlc.workouts2 | exerciseFilter:searchText" 
                         ng-model="workout.name">
                         <li class ="button button-stable" style="width:80%; float:left;" 
                         ng-click="submitForm(workout)">

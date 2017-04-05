@@ -1,23 +1,24 @@
 <ion-view view-title="Sport Editor">
         <ion-content class="padding has-header">
-            <!-- CREATING -->
-            <!--<div class="bar bar-header">-->
-            <!--    <span ng-click="cm.cancelCreate()" class="cancel-create">Cancel</span>-->
-            <!--</div>-->
           
-            <div>
               <div ng-controller="SportCtrl as sm">
+                <div class="bar bar-header item-input-inset">
+                  <label class="item-input-wrapper">
+                    <i class="icon ion-ios-search placeholder-icon"></i>
+                    <input class = "item-input-wrapper" type="search" placeholder="search" 
+                    ng-model='searchText.val'></input>
+                  </label>
+                </div>
                 <div ng-if="!sm.isCreating && !sm.isEditing">
                   <!--<form ng-submit="submitForm(sport)">-->
                     <ion-list>
-                      <ion-item ng-repeat="sport in sm.data | orderBy: 'name'"  ng-model="sport.name" ng-click="submitForm(sport)">
+                      <ion-item ng-repeat="sport in sm.data | exerciseFilter:searchText | orderBy: 'name'"  ng-model="sport.name" ng-click="submitForm(sport)">
                         {{ sport.name }}
                       </ionitem> 
                     </ion-list>
                   <!--</form>  -->
                 </div>
               </div>
-            </div>
             
         </ion-content>
 </ion-view>

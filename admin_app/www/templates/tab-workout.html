@@ -8,9 +8,16 @@
             
         <ion-content class="padding has-header">
             <div ng-controller="WorkoutCtrl as wlc">
+              <div class="bar bar-header item-input-inset">
+                  <label class="item-input-wrapper">
+                    <i class="icon ion-ios-search placeholder-icon"></i>
+                    <input class = "item-input-wrapper" type="search" placeholder="search" 
+                    ng-model='searchText.val'></input>
+                  </label>
+                </div>
                 <div ng-if="!wlc.isCreating && !wlc.isEditing">
                     <ion-list>
-                      <ion-item ng-repeat="workouts in wlc.data | orderBy: 'name'"  
+                      <ion-item ng-repeat="workouts in wlc.data | exerciseFilter: searchText | orderBy: 'name'"  
                       ng-model="wlc.data" ng-click="submitForm(workouts)">
                         {{ workouts.name }}
                       </ionitem> 

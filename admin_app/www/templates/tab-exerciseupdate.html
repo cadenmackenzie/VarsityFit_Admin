@@ -1,11 +1,21 @@
 <ion-view view-title="Exercise Update for {{name}}">
-
+    
+    <ion-nav-buttons side="right">
+         <a class="button button-assertive" ng-click="vm.delete(vm.ex)">
+            <label class="string">
+                Remove
+            </label>
+        </a>
+    </ion-nav-buttons>
     <div>
+        
         <ion-content class="padding has-header">
             <!-- CREATING -->
             <div class="bar bar-header">
                 <span ng-click="vm.cancelCreate()" class="cancel-create">Cancel</span>
             </div>
+            
+        </a>
             
             <div>
                 <form class="create-form" role="form"

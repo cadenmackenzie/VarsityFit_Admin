@@ -172,6 +172,13 @@ angular.module('starter.services', [])
           },
       });
         };
+        
+        service.delete = function (id) {
+            return $http({
+                method: 'DELETE',
+                url : getUrl() + id
+            });
+        };
     })
     
     .service('WorkoutModel', function ($http, Backand) {
@@ -197,6 +204,13 @@ angular.module('starter.services', [])
 
         service.create = function (object) {
             return $http.post(getUrl(), object);
+        };
+        
+        service.delete = function (id) {
+            return $http({
+                method: 'DELETE',
+                url : getUrl() + id
+            });
         };
         
     })
@@ -291,7 +305,6 @@ angular.module('starter.services', [])
         };
         
          service.delete = function (id) {
-            console.log("url", getUrl() + id);
             return $http({
                 method: 'DELETE',
                 url : getUrl() + id

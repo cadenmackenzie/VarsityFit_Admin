@@ -45,7 +45,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     
     var filteredWorkouts = [];
     searchText = searchText || '' ;
-    //console.log(JSON.stringify(searchText), searchText.val);
     
     if (searchText.val == ''){
       return workout;
@@ -94,7 +93,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
           $state.go("tab.analysis");
           
         }, function(error){
-          console.log(JSON.stringify(error));
+          console.log("login error", JSON.stringify(error));
         });
     }
 
@@ -167,40 +166,8 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
           cm.data2.push(item)
         }
       });
-    });
-    // var notuser = [];
-    // var temp_array = [];
-    // UserModel.getUsers($scope.sport.id)
-    // .then(function (result) {
-    //   var tempo_users = result.data.relatedObjects.users;
-    //   for (var user in tempo_users){
-    //     if (!angular.toJson(temp_array).includes(angular.toJson(user))){
-    //       temp_array.push(tempo_users[user]);
-    //     }
-    //   }
-    //   cm.data = temp_array;
-      
-    //   UserModel.all()
-    //   .then(function(result){
-    //     var da = result.data.data;
-    //     var fake_array = []
-    //     var bu;
-        
-    //     for (var baduser in da){
-    //       bu = da[baduser];
-    //       if (!(notuser.includes(angular.toJson(bu))) && 
-    //           !angular.toJson(temp_array).includes(angular.toJson(bu))){
-    //         notuser.push(bu);
-    //       }
-    //     }
-    //     cm.data2 = notuser;
-    //   });
-
-        
-    //     console.log("cm.data", JSON.stringify(cm.data));
-    // });
-
-  }
+  });
+}
       
   function create(object){
     UserModel.create(object)
@@ -265,6 +232,11 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   
   //$scope.sport = {};
   
+  if(!angular.isDefined($scope.searchText)){
+    console.log("init");
+    $scope.searchText = {};
+    $scope.searchText.val='';  
+  } 
   
   $scope.submitForm = function(sport) {
     console.log("sport submit");
@@ -333,7 +305,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 })
 
 //controller to populate sports_users
-.controller('SportEditorCtrl', function($rootScope, $scope, UserSportModel, $state, Backand, formData, SportModel) {
+.controller('SportEditorCtrl', function($rootScope, $scope, $ionicPopup, UserSportModel, $state, Backand, formData, SportModel) {
   var usm = this;
 
   if ($rootScope.sport != null){
@@ -384,21 +356,25 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   };
   
   function update(object){
-    UserSportModel.fetch(object.id).then(function (result){
-      console.log("stuff", JSON.stringify(result));
-    });
-    console.log(JSON.stringify(usm.sport));
-    console.log("update wo", JSON.stringify(object));
-    UserSportModel.update(object)
-    .then(function (result){
-      console.log("then");
-    },
-    function (error){
-      console.log('error', JSON.stringify(error));
-    });
-    cancelCreate();
-    getAll();
-    $state.go("tab.sport");
+    console.log("update sport");
+    
+    $ionicPopup.confirm({
+      title: 'Confirm Name Change',
+      template: 'This will change the name of the sport, press ok to proceed.'
+    }).then(function(result){
+      if (result){
+        UserSportModel.update(object)
+        .then(function (result){
+          console.log("then");
+        },
+        function (error){
+          console.log('error', JSON.stringify(error));
+        });
+        cancelCreate();
+        getAll();
+        $state.go("tab.sport"); 
+      }
+    })
   }
   
   $scope.edit = function(sport){
@@ -580,7 +556,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 })
 
 //controller to access workouts
-.controller('WorkoutCtrl', function($rootScope, $scope, WorkoutListModel, $state, Backand, formData) {
+.controller('WorkoutCtrl', function($rootScope, $scope, WorkoutListModel, $ionicPopup, $state, Backand, formData) {
   var wlc = this;
   var userDetail;
   var workouts;
@@ -612,6 +588,8 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     console.log("WorkoutCtrl.getAll");
   }
   
+  //GET workouts for the sport 
+  //GET other workouts
   function getWorkouts(){
     console.log("Get workouts");
     var workoutlist_p = WorkoutListModel.getWorkouts(parseInt($scope.sport.id));
@@ -655,6 +633,28 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
         // $state.go("tab.analysis");
       });
   }
+  
+  //Warn the user and DELETE workout if confirmed
+  function remove(object){
+    $ionicPopup.confirm({
+      title: 'Warning',
+      template: 'This will remove the workout, press ok to proceed.'
+    }).then(function(result){
+        if (result){
+        WorkoutListModel.delete(object.id)
+          .then(function(result){
+          if (angular.isDefined($scope.sport)){
+            getWorkouts();
+          }
+          else{
+            getAll(); 
+          }
+        $state.go("tab.workout");
+        });
+      }  
+    });
+  }
+  
   function initCreateForm() {
     wlc.newObject = {name: ''}; 
   }
@@ -688,6 +688,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   wlc.isCurrent = isCurrent;
   wlc.cancelEditing = cancelEditing;
   wlc.cancelCreate = cancelCreate;
+  wlc.delete = remove;
   $rootScope.$on("authorized", function() {
     getAll();
   });
@@ -710,30 +711,27 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 })
 
 //contoller to populate workouts_exercises
-.controller('WorkoutExerciseCtrl', function($rootScope, $scope, WorkoutExerciseModel, ExerciseListModel, $state, Backand, formData) {
+.controller('WorkoutExerciseCtrl', function($rootScope, $scope, $ionicPopup, WorkoutExerciseModel, ExerciseListModel, $state, Backand, formData) {
   var wte = this;
   
+  //Checks to define variables that are needed for searching and editing the DB
   if ($rootScope.wo != null){
-    console.log($rootScope.wo);
     wte.wo = $rootScope.wo;
-    console.log(wte.wo.name)
   }
   
   if(!angular.isDefined($scope.searchText)){
-    console.log("init");
+    console.log("init WorkoutExerciseCtrl");
     $scope.searchText = {};
     $scope.searchText.val='';  
   } 
   
   $scope.exercise = {};
-  //$scope.users = {};
   var exerciseId;
 
   $scope.workouts = formData.getForm();
   var workoutId = $scope.workouts.id;
 
-  //getAll();
-  
+  //Subit the user's form and build a new relations
   $scope.submitForm = function(exercise) {
     formData.updateForm(exercise);
     console.log("WorkoutExercise Submit");
@@ -744,7 +742,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   };
   
    $scope.addExercise = function(exercise){
-     console.log("wte-addExercise", JSON.stringify(formData.getForm()));
+     console.log("wte-addExercise");
       wte.newObject.exercise = exercise.id;
       wte.newObject.workout = workoutId; 
       var add_p = wte.create(wte.newObject);
@@ -770,24 +768,27 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   };
   
    function update(object){
-    WorkoutExerciseModel.fetch(object.id).then(function (result){
-      console.log("stuff", JSON.stringify(result));
+    console.log("update workout", JSON.stringify(object));
+    $ionicPopup.confirm({
+      title: 'Confirm Changes',
+      template: 'This will change the workout, press ok to proceed.'
+    }).then(function(result){
+        if (result){
+          WorkoutExerciseModel.update(object)
+          .then(function (result){
+            console.log("then");
+          },
+          function (error){
+            console.log('error', JSON.stringify(error));
+          });
+          cancelCreate();
+          getAll();
+          $state.go("tab.workout");
+        }
     });
-    console.log("update wo", JSON.stringify(object));
-    WorkoutExerciseModel.update(object)
-    .then(function (result){
-      console.log("then");
-    },
-    function (error){
-      console.log('error', JSON.stringify(error));
-    });
-    cancelCreate();
-    getAll();
-    $state.go("tab.workout");
   }
   
   $scope.edit = function(workout){
-    console.log("workout_update", JSON.stringify(workout));
     $rootScope.wo = workout;
     $state.go('tab.workoutsupdate');
   };
@@ -805,36 +806,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
           }
         });
      });
-    // console.log("getEx");
-    // var temp_ex = [];
-    // //console.log(JSON.stringify($scope.workouts));
-    // var exlist_p = WorkoutExerciseModel.getEx(parseInt($scope.workouts.id));
-    // exlist_p.then(function (result){
-    //   console.log(JSON.stringify(result.data.relatedObjects.exercises));
-    //   var exercises = result.data.relatedObjects.exercises;
-    //   for (var index in exercises)
-    //     temp_ex.push(exercises[index]);
-        
-    //   ExerciseListModel.all()
-    //   .then(function(result){
-    //     var all_ex = result.data.data;
-    //     var not_ex = []
-    //     var curr_ex;
-        
-    //     for (var baduser in all_ex){
-    //       curr_ex = all_ex[baduser];
-    //     // console.log("curr_ex", JSON.stringify(curr_ex));
-    //       if (!(not_ex.includes(angular.toJson(curr_ex))) && 
-    //           !angular.toJson(temp_ex).includes(angular.toJson(curr_ex))){
-    //         not_ex.push(curr_ex);
-    //       }
-    //     }
-    //     wte.check2 = not_ex;
-    //   });
-
-    // });
-    
-    // wte.check = temp_ex;
   }
   function getAll(){
     WorkoutExerciseModel.all()
@@ -849,7 +820,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
       .then(function (result) {
         cancelCreate();
         getEx();
-        
       });
   }
   
@@ -980,7 +950,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 })
 
 //contoller create exercises  
-.controller('ExerciseEditorCtrl', function($rootScope, $scope, ExerciseModel, $state, Backand) {
+.controller('ExerciseEditorCtrl', function($rootScope, $scope, $ionicPopup, ExerciseModel, $state, Backand) {
   var vm = this;
   console.log("rs",JSON.stringify( $rootScope.ex), typeof $rootScope.ex);
   if ($rootScope.ex != null){
@@ -1006,16 +976,24 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   
   function update(object){
     console.log("update ex");
-    ExerciseModel.update(object)
-    .then(function (result){
-      console.log("updated exercise", JSON.stringify(result));
-    },
-    function (error){
-      console.log('error', JSON.stringify(error));
+    
+     $ionicPopup.confirm({
+      title: 'Confirm Changes',
+      template: 'This will change the exercise, press ok to proceed.'
+    }).then(function(result){
+      if (result){
+        ExerciseModel.update(object)
+        .then(function (result){
+          console.log("updated exercise", JSON.stringify(result));
+        },
+        function (error){
+          console.log('error', JSON.stringify(error));
+        });
+        cancelCreate();
+        getAll();
+        $state.go("tab.exercise");
+      }
     });
-    cancelCreate();
-    getAll();
-    $state.go("tab.exercise");
   }
 
   function create(object){
@@ -1026,6 +1004,20 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
         getAll();
         $state.go("tab.exercise");
       });
+  }
+  
+  function remove(object){
+    $ionicPopup.confirm({
+      title: 'Warning',
+      template: 'This will remove the exercise, press ok to proceed.'
+    }).then(function(result){
+        if (result){
+        ExerciseModel.delete(object.id)
+          .then(function(result){
+          $state.go("tab.exercise");
+        });
+      }  
+    });
   }
   
   function initCreateForm() {
@@ -1063,6 +1055,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   vm.cancelEditing = cancelEditing;
   vm.cancelCreate = cancelCreate;
   vm.update = update;
+  vm.delete = remove;
   $rootScope.$on("authorized", function() {
     getAll();
   });
@@ -1073,15 +1066,21 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
 })
 
 //controller to access exercises
-.controller('ExercisesCtrl', function($ionicHistory, $rootScope, $scope, ExerciseListModel, WorkoutExerciseModel, $state, Backand) {
+.controller('ExercisesCtrl', function($ionicHistory, $ionicPopup, $rootScope, $scope, ExerciseListModel, WorkoutExerciseModel, $state, Backand) {
   var ec = this;
+  
+    if(!angular.isDefined($scope.searchText)){
+    console.log("init");
+    $scope.searchText = {};
+    $scope.searchText.val='';  
+  } 
   
   $scope.createExercise = function(){
     $state.go('tab.exerciseeditor');
   };
   
   $scope.submitForm =function(exercise){
-    console.log("ex_submit", JSON.stringify(exercise));
+    console.log("ex_submit");
     $rootScope.ex = exercise;
     $state.go('tab.exerciseupdate');
   };
@@ -1098,8 +1097,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
             ec.data = result.data.data;
       });
   }
-  
-  //console.log("backview", JSON.stringify($ionicHistory.backView()));
   
   function create(object){
     ExerciseListModel.create(object)
@@ -1157,7 +1154,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   getAll();
   //getEx();
 
-
 })
 
 .controller('AnalysisCtrl', function($rootScope, $scope, Backand, $state, SurveyService, UserModel, SportModel, ExerciseListModel) {
@@ -1174,6 +1170,12 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
     console.log("mic_check");
     sv.dates = [];
   }
+  
+  if(!angular.isDefined($scope.searchText)){
+    console.log("init");
+    $scope.searchText = {};
+    $scope.searchText.val='';  
+  } 
   
   $scope.export= function(){
     var csvContent = "data:text/csv;charset=utf-8,";
@@ -1355,7 +1357,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
           if (!$scope.labels.includes(survey.date.slice(0,10))){
             $scope.labels.push(survey.date.slice(0,10));
           }
-          console.log("surveys includes", JSON.stringify(survey), "next one \n", JSON.stringify(surveys));
           if (!JSON.stringify(surveys).includes(JSON.stringify(survey))){
             surveys.push(survey);
           }
@@ -1471,6 +1472,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
         var totalSleepHours = 0;
         var totalSleepQuality = 0;
         var totalDifficulty = 0;
+        
         result.data.data.forEach(function(survey){
           if (!$scope.labels.includes(survey.date.slice(0,10))){
             $scope.labels.push(survey.date.slice(0,10));
@@ -1717,7 +1719,6 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
         $scope.getUserDetails();
         $state.go('login');
         return response;
-
     });
   };
 

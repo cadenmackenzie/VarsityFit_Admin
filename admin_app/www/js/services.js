@@ -16,7 +16,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(), { 
                 params: {
-                    pageSize: '200',
+                    pageSize: '1000',
                     exclude: "metadata, totalrows"
                 }
             });
@@ -25,7 +25,7 @@ angular.module('starter.services', [])
         service.userSurveys = function(id){
             return $http.get(getUrl(),{
                 params: {
-                    pageSize: '200',
+                    pageSize: '1000',
                     exclude: 'metadata',
                     filter: [{"fieldName": "user", "operator": "in", "value": id}],
                 }
@@ -35,7 +35,7 @@ angular.module('starter.services', [])
         service.sportSurveys = function(id){
             return $http.get(getUrl(),{
                 params: {
-                    pageSize:'200',
+                    pageSize:'1000',
                     exclude:'metadata',
                     filter:[{"fieldName":"sport", "operator": "in", "value": id}],
                 }
@@ -45,9 +45,44 @@ angular.module('starter.services', [])
         service.exerciseSurveys = function(id){
             return $http.get(getUrl(),{
                 params: {
-                    pageSize: '2000',
+                    pageSize: '1000',
                     exclude: 'metadata',
                     filter:[{"fieldName":"exercise", "operator": "in", "value": id}]
+                }
+            });
+        };
+    })
+    
+    .service('ExerciseSurveyModel', function($http, Backand){
+       var service = this,
+        baseUrl = '/1/objects/',
+        objectName = 'exercise_survey/';
+        
+        function getUrl() {
+            return Backand.getApiUrl() + baseUrl + objectName;   
+        }
+        
+         function getUrlForId(id) {
+            return getUrl() + id;
+        }
+
+        service.all = function () {
+            return $http.get(getUrl(), { 
+                params: {
+                    pageSize: '1000',
+                    exclude: "metadata, totalrows"
+                }
+            });
+        };
+        
+        service.exerciseSurveys = function(id){
+            return $http.get(getUrl(),{
+                params: {
+                    pageSize: '1000',
+                    exclude: 'metadata',
+                    deep: true,
+                    relatedObjects: true,
+                    filter: [{"fieldName": "exercise", "operator": "in", "value": id}],
                 }
             });
         };
@@ -80,7 +115,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(), { 
                 params: {
-                    pageSize: '200'
+                    pageSize: '1000'
                 }
                 
             });
@@ -99,7 +134,7 @@ angular.module('starter.services', [])
               method: 'GET',
               url: Backand.getApiUrl() + baseUrl + objectName,
               params: {
-                  pageSize: '200',
+                  pageSize: '1000',
                   pageNumber: '1',
                   deep: true,
                   relatedObjects: true,
@@ -145,7 +180,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(), { 
                 params: {
-                    pageSize: '200',
+                    pageSize: '1000',
                     exclude: "metadata, totalrows"
                 }
             });
@@ -195,7 +230,11 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(),  { 
+                params: {
+                    pageSize: '1000'
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -231,6 +270,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(),{
                 params:{
+                    pageSize: "1000",
                     exclude: "metadata, totalrows"
                 }
             });
@@ -276,6 +316,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(),{
                 params:{
+                    pageSize: "1000",
                     exclude: "metadata, totalrows"
                 }
             });
@@ -294,7 +335,7 @@ angular.module('starter.services', [])
               method: 'GET',
               url: Backand.getApiUrl() + baseUrl + 'sports_workouts/',
               params: {
-                  pageSize: '20',
+                  pageSize: '1000',
                   pageNumber: '1',
                   filter: [{"fieldName": "sport", "operator": "in", "value": id}],
                   deep: true,
@@ -327,7 +368,12 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(), { 
+                params: {
+                    pageSize: '1000',
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -353,7 +399,12 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(),  { 
+                params: {
+                    pageSize: '1000',
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -398,7 +449,12 @@ angular.module('starter.services', [])
         }
 
         service.all = function () {
-            return $http.get(getUrl());
+            return $http.get(getUrl(),  { 
+                params: {
+                    pageSize: '1000',
+                    exclude: "metadata, totalrows"
+                }
+            });
         };
 
         service.fetch = function (id) {
@@ -434,7 +490,7 @@ angular.module('starter.services', [])
         service.all = function () {
             return $http.get(getUrl(),{
                 params:{
-                    pageSize: '200',
+                    pageSize: '1000',
                     exclude: "metadata, totalrows"
                 }
             });

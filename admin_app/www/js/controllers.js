@@ -337,8 +337,8 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   $scope.removeUser = function(user){
     console.log("removing user", JSON.stringify(user));
     usm.data.forEach(function(apple){
-      console.log("apple.sport?", JSON.stringify(apple));
-      if ((parseInt(apple.user) == user.id && (parseInt(apple.sport) == sportId))){
+      console.log(apple.user, user.id)
+      if (apple.user.includes(user.id.toString()) && (apple.sport.includes(sportId.toString()))){
         console.log("deleted", apple.id);
         var remove_p = usm.remove(apple.id);
         remove_p.then(function(){
@@ -1268,7 +1268,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   getAll();
 })
 
-.controller("GraphCtrl", function ($scope, $rootScope, Backand, SurveyService, UserModel) {
+.controller("GraphCtrl", function ($scope, $rootScope, Backand, SurveyService, UserModel, ExerciseSurveyModel) {
   $scope.firstName = $rootScope.ag[0].firstName || $rootScope.ag[0].name;
   console.log("fn", $scope.firstName);
   var gc = this;
@@ -1278,6 +1278,7 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   gc.stress = [];
   gc.weight = [];
   gc.fatigue = [];
+  gc.exerciseOptions = [];
   gc.exportText = '';
   if (typeof $rootScope.surveys == undefined){
     $rootScope.surveys = [];
@@ -1568,123 +1569,56 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
   }
 
   if ($rootScope.ag[1] == 'exercise'){
-    console.log("sportsurvey", $rootScope.ag[0].id); 
-    SurveyService.exerciseSurveys($rootScope.ag[0].id).then(function(result){
-      var today = new Date();
-      var start = new Date(2017,01,20);
-      var fatigueIn = [];
-      var stress = [];
-      var weightOutData = [];
-      var weightInData = [];
-      var fatigueOut = [];
-      var sleepQuality = [];
-      var sleepHours = [];
-      var difficulty = [];
-      var surveys = [];
+    var today = new Date();
+    var exerciseSurveys = {};
+    var eSurveys = {};
+    var surveyCollection = [];
+    var exerciseSurveyCollection = [];
+    var surveys = [];
+    console.log("exerciseSurvey", $rootScope.ag[0].id); 
+    ExerciseSurveyModel.exerciseSurveys($rootScope.ag[0].id).then(function(result){
+      //console.log("exerciseSurveyModel\n", JSON.stringify(result.data.relatedObjects.completed));
+      exerciseSurveys = result.data.data;
+      eSurveys = result.data.relatedObjects.completed;
       
-      //console.log("survey sports", JSON.stringify(result.data.data[0]));
-      for (var i = new Date(2017,01,20); i <= today; i.setDate(i.getDate() + 1)){
-        var count = 0;
-        var totalStress = 0;
-        var totalWeightIn = 0;
-        var totalWeightOut = 0;
-        var totalFatigueIn = 0;
-        var totalFatigueOut = 0;
-        var totalSleepHours = 0;
-        var totalSleepQuality = 0;
-        var totalDifficulty = 0;
-        result.data.data.forEach(function(survey){
-          if (!$scope.labels.includes(survey.date.slice(0,10))){
-            $scope.labels.push(survey.date.slice(0,10));
-          }
-          if (!surveys.includes(survey)){
+      for (var survey in eSurveys){
+        //console.log("eSurvey", JSON.stringify(eSurveys[survey]));
+        surveyCollection.push(eSurveys[survey]);
+      }
+      
+      exerciseSurveys.forEach(function(row, i){
+        exerciseSurveyCollection.push(row);
+        
+        if (!$scope.labels.includes(surveyCollection[i].date.slice(0,10))){
+          $scope.labels.push(surveyCollection[i].date.slice(0,10));
+        }
+        
+        if (!JSON.stringify(surveyCollection[i]).includes(JSON.stringify(surveyCollection[i]))){
             surveys.push(survey);
-          }
-          if ( survey.date.slice(0,10) == i.toJSON().slice(0,10)){
-            count +=1;
-            totalStress += survey.stressLevel;
-            totalWeightIn += survey.bodyWeightIn;
-            totalWeightOut += survey.bodyWeightOut;
-            totalFatigueIn += survey.fatigueLevelPre;
-            totalFatigueOut += survey.fatigueLevelPost;
-            totalSleepQuality += survey.sleepQuality;
-            totalSleepHours += survey.hoursSleep;
-            totalDifficulty += survey.practiceDifficulty;
+        }
+        
+      });
+      
+     for (var i = new Date(2017,01,20); i <= today; i.setDate(i.getDate() + 1)){
+        var count = 0;
+        var totalWeight = 0;
+        exerciseSurveys.forEach(function(row, index){
+          console.log("hi", surveyCollection[index].date.slice(0,10), i.toJSON().slice(0,10));
+          if (surveyCollection[index].date.slice(0,10) == i.toJSON().slice(0,10)){
+            console.log("it is working", JSON.stringify(row.weights), index);
           }
         });
-        
-        totalStress = totalStress/count;
-        totalFatigueIn = totalFatigueIn/count;
-        totalFatigueOut = totalFatigueOut/count;
-        totalWeightIn = totalWeightIn/count;
-        totalWeightOut = totalWeightOut/count;
-        totalSleepHours = totalSleepHours/count;
-        totalSleepQuality = totalSleepQuality/count;
-        totalDifficulty = totalDifficulty/count;
-        
-        if (totalStress > 0){
-          weightOutData.push(totalWeightOut);
-          weightInData.push(totalWeightIn);
-          stress.push(totalStress);
-          fatigueIn.push(totalFatigueIn);
-          fatigueOut.push(totalFatigueOut);
-          difficulty.push(totalDifficulty);
-          sleepHours.push(totalSleepHours);
-          sleepQuality.push(totalSleepQuality);
-        }
-
       }
-      gc.stress.push(stress);
-      gc.stress.push(sleepQuality);
-      gc.stress.push(sleepHours);
-      gc.weight.push(weightInData);
-      gc.weight.push(weightOutData);
-      gc.fatigue.push(fatigueIn);
-      gc.fatigue.push(fatigueOut);
-      gc.fatigue.push(difficulty);
-      
-      $rootScope.surveys = surveys;
-      
-      gc.fatigueSeries = ['Fatigue Pre', 'Fatigue Post', 'Workout Difficulty'];
-      gc.stressSeries = ['Stress','Sleep Quality', 'Hours Slept'];
-      gc.weightSeries = ['Weight Pre', 'Weight Post'];
     });
     
-  gc.weightOptions = {
-  title: {display:true, text:"Weight"},
-  scales: { yAxes: [{ ticks: { min:100, max:170} }] }
-  };
-  gc.stressOptions = {
-      title: {display:true, text: "Stress and Sleep"},
-      scales: { yAxes: [{ ticks: {min: 0, max: 12,stepSize:1} }] },
-      elements: {line: {fill: false} }
-  };
-  gc.fatigueOptions = {
+  gc.exerciseData;
+  gc.exerciseSeries = ["first", "second", "third"];
+  
+  gc.exerciseOptions = {
     title: {display:true, text: "Fatigue and Difficulty"},
-    scales: { yAxes: [{ ticks: {min:0, stepSize:1} }] }
+    scales: { yAxes: [{ ticks: {stepSize:1} }] }
   };
-  
-  gc.override = [
-    {
-      label:"Bar chart",
-      borderWidth: 1,
-      type: 'bar'
-    },
-    {
-      label:"Bar chart",
-      borderWidth: 1,
-      type: 'bar'
-    },
-    {
-      label: "Line chart",
-      borderWidth: 3,
-      hoverBackgroundColor: "rgba(255,99,132,0.4)",
-      hoverBorderColor: "rgba(255,99,132,1)",
-      type: 'line',    
-    }
-    ];
   }  
-  
   //prepExport(); running this everytime will not only lag the webpage, but cause backend issues
 })
 

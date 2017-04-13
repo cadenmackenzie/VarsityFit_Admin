@@ -166,8 +166,8 @@ angular.module('starter.controllers', ['ionic', 'chart.js'])
           cm.data2.push(item)
         }
       });
-  });
-}
+    });
+  }
       
   function create(object){
     UserModel.create(object)

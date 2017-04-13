@@ -17,7 +17,8 @@ angular.module('starter.services', [])
             return $http.get(getUrl(), { 
                 params: {
                     pageSize: '1000',
-                    exclude: "metadata, totalrows"
+                    exclude: "metadata, totalrows",
+                    order: "date"
                 }
             });
         };

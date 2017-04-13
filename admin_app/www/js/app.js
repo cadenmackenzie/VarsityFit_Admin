@@ -49,14 +49,14 @@ angular.module('starter', ['ionic', 'backand', 'starter.controllers', 'starter.s
   })
 
   .state('tab.analysis', {
-      url: '/analysis',
-      views: {
-        'tab-analysis': {
-          templateUrl: 'templates/tab-analysis.html',
-          controller: 'AnalysisCtrl as sv'
-        }
+    url: '/analysis',
+    views: {
+      'tab-analysis': {
+        templateUrl: 'templates/tab-analysis.html',
+        controller: 'AnalysisCtrl as sv'
       }
-    })
+    }
+  })
     
     .state('tab.workouteditor', {
       url: '/workouteditor',
